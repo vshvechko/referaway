@@ -1,10 +1,10 @@
 # referaway services
-# based on Slim + Doctrine
+### based on Slim + Doctrine
 
-# Create schema
+### Create schema
 
 $ vendor/bin/doctrine orm:schema-tool:create
 
-# Update schema
+### Update schema
 
 $ vendor/bin/doctrine orm:schema-tool:update --force
