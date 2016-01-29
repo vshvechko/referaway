@@ -11,6 +11,8 @@ use Interop\Container\ContainerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
+use Psr\Http\Message\ResponseInterface;
+use Slim\App;
 use Slim\Handlers\Strategies\RequestResponseArgs;
 
 class Configurator {
@@ -49,6 +51,28 @@ class Configurator {
             return new ResponseDataFormatter();
         };
 
-        return $container;
+        // error handler
+        $container['errorHandler'] = function ($c) {
+            return function ($request, ResponseInterface $response, \Exception $e) use ($c) {
+                /**
+                 * @var Logger $logger
+                 */
+                $logger = $c->get('logger');
+                $logger->err(sprintf('%s code %s in file %s:%s', $e->getMessage(),
+                    $e->getCode(), $e->getFile(), $e->getLine()));
+                $logger->debug($e->getTraceAsString());
+
+                /**
+                 * @var ResponseDataFormatter $formatter
+                 */
+                $formatter = $c->get('dataFormatter');
+                return $response->withJson($formatter->getFailure('Service error'), 500);
+            };
+        };
+        return $this;
+    }
+
+    public function initMiddleware(App $app) {
+        return $this;
     }
 }

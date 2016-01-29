@@ -56,9 +56,6 @@ abstract class AbstractResource
         $this->init();
     }
 
-    /**
-     * Default init, use for overwrite only
-     */
     public function init()
     {}
 
@@ -81,7 +78,7 @@ abstract class AbstractResource
     /**
      * Default put method
      */
-    public function put()
+    public function put($id)
     {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
@@ -89,7 +86,7 @@ abstract class AbstractResource
     /**
      * Default delete method
      */
-    public function delete()
+    public function delete($id)
     {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
@@ -132,7 +129,7 @@ abstract class AbstractResource
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManager
      */
     public function getEntityManager()
     {

@@ -5,7 +5,7 @@ use Slim\Container;
 require_once __DIR__ . '/vendor/autoload.php';
 
 $di = new Container(include __DIR__ . '/config/settings.php');
-$di = (new \App\Configurator())->loadDependencyDefaults($di);
+(new \App\Configurator())->loadDependencyDefaults($di);
 
 $em = $di->get('entityManager');
 

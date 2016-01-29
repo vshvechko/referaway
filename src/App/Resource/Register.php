@@ -3,13 +3,13 @@
 namespace App\Resource;
 
 
+use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use App\Resource;
-use App\Service\User as UserService;
 
 class Register extends AbstractResource {
     /**
-     * @var \App\Service\User
+     * @var UserDAO
      */
     private $userService;
 
@@ -18,11 +18,11 @@ class Register extends AbstractResource {
      */
     public function init()
     {
-        $this->setUserService(new UserService($this->getEntityManager()));
+        $this->setUserService(new UserDAO($this->getEntityManager()));
     }
 
     /**
-     * @return \App\Service\User
+     * @return UserDAO
      */
     public function getUserService()
     {
@@ -30,7 +30,7 @@ class Register extends AbstractResource {
     }
 
     /**
-     * @param \App\Service\User $userService
+     * @param UserDAO $userService
      */
     public function setUserService($userService)
     {
