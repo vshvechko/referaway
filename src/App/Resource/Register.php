@@ -38,10 +38,25 @@ class Register extends AbstractResource {
     }
 
     public function post() {
-        $obj = $this->getRequest()->getParsedBody();
+        $data = $this->getRequest()->getParsedBody();
 
         try {
-            $user = $this->getUserService()->createUser($obj);
+            if (empty($data['email']))
+                throw new \InvalidArgumentException('"email" missed');
+            if (empty($data['password']))
+                throw new \InvalidArgumentException('"password" missed');
+            if (empty($data['firstName']))
+                throw new \InvalidArgumentException('"firstName" missed');
+            if (empty($data['phone']))
+                throw new \InvalidArgumentException('"phone" missed');
+            if (empty($data['lastName']))
+                throw new \InvalidArgumentException('"lastName" missed');
+            if ($this->getUserService()->isEmailExist($data['email']))
+                throw new \InvalidArgumentException('email "' . $data['email'] . '"" exists already');
+
+            $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
+
+            $user = $this->getUserService()->createUser($data);
             return array(
                 'id' => $user->getId(),
                 'created' => $user->getCreated(),

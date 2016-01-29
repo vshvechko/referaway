@@ -2,20 +2,22 @@
 
 namespace App\DAO;
 
+use Doctrine\ORM\EntityManager;
+
 abstract class AbstractDAO
 {
     /**
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
 
-    public function __construct(\Doctrine\ORM\EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->setEntityManager($entityManager);
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManager
      */
     public function getEntityManager()
     {
@@ -23,7 +25,7 @@ abstract class AbstractDAO
     }
 
     /**
-     * @param \Doctrine\ORM\EntityManager $entityManager
+     * @param EntityManager $entityManager
      */
     public function setEntityManager($entityManager)
     {

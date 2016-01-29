@@ -29,18 +29,31 @@ class User extends AbstractResource
     public function get($id = null)
     {
         if ($id === null) {
-            $data = $this->getUserService()->getUsers();
+            $users = $this->getUserService()->getUsers();
+            /**
+             * @var \App\Entity\User $user
+             */
+            $data = [];
+            foreach ($users as $user) {
+                $data[] = [
+                    'id' => $user->getId(),
+                    'created' => $user->getCreated(),
+                    'updated' => $user->getUpdated(),
+                    'email' => $user->getEmail(),
+                ];
+            }
+
         } else {
             $user = $this->getUserService()->getUser($id);
             if ($user === null) {
                 throw new StatusException('User not found', self::STATUS_NOT_FOUND);
             }
-            $data = array(
+            $data = [
                 'id' => $user->getId(),
                 'created' => $user->getCreated(),
                 'updated' => $user->getUpdated(),
                 'email' => $user->getEmail()
-            );
+            ];
         }
 
         return $data;
@@ -55,12 +68,12 @@ class User extends AbstractResource
 
         try {
             $user = $this->getUserService()->createUser($obj);
-            return array(
+            return [
                 'id' => $user->getId(),
                 'created' => $user->getCreated(),
                 'updated' => $user->getUpdated(),
                 'email' => $user->getEmail()
-            );
+            ];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
@@ -71,22 +84,21 @@ class User extends AbstractResource
      */
     public function put($id)
     {
-        $email = $this->getSlim()->request()->params('email');
-        $password = $this->getSlim()->request()->params('password');
+        $data = $this->getRequest()->getParsedBody();
 
-        if (empty($email) && empty($password) || $email === null && $password === null) {
-            self::response(self::STATUS_BAD_REQUEST);
-            return;
-        }
-
-        $user = $this->getUserService()->updateUser($id, $email, $password);
+        $user = $this->getUserService()->updateUser($id, $data);
 
         if ($user === null) {
-            self::response(self::STATUS_NOT_IMPLEMENTED);
-            return;
+            throw new StatusException('Not found', self::STATUS_NOT_FOUND);
         }
 
-        self::response(self::STATUS_NO_CONTENT);
+        return [
+            'id' => $user->getId(),
+            'created' => $user->getCreated(),
+            'updated' => $user->getUpdated(),
+            'email' => $user->getEmail()
+        ];
+
     }
 
     /**
@@ -106,14 +118,6 @@ class User extends AbstractResource
     }
 
     /**
-     * Show options in header
-     */
-    public function options()
-    {
-        self::response(self::STATUS_OK, array(), array('GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'));
-    }
-
-    /**
      * @return UserDAO
      */
     public function getUserService()
@@ -129,11 +133,4 @@ class User extends AbstractResource
         $this->userService = $userService;
     }
 
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
 }

@@ -18,7 +18,7 @@ class User extends AbstractEntity
     protected $email;
 
     /**
-     * @Column(type="string", length=32)
+     * @Column(type="string", length=255)
      * @var string
      */
     protected $password;
@@ -42,34 +42,40 @@ class User extends AbstractEntity
     protected $phone;
 
     /**
-     * @Column(type="string", length=32)
+     * @Column(type="string", length=32, nullable=true)
      * @var string
      */
     protected $business;
 
     /**
-     * @Column(type="string", length=255)
+     * @Column(type="string", length=255, nullable=true)
      * @var string
      */
     protected $address;
 
     /**
-     * @Column(type="string", length=32)
+     * @Column(type="string", length=32, nullable=true)
      * @var string
      */
     protected $city;
 
     /**
-     * @Column(type="string", length=32)
+     * @Column(type="string", length=32, nullable=true)
      * @var string
      */
     protected $country;
 
     /**
-     * @Column(type="string", length=6)
+     * @Column(type="string", length=6, nullable=true)
      * @var string
      */
     protected $zip;
+
+    /**
+     * @Column(type="string", length=255, nullable=true)
+     * @var string
+     */
+    protected $token;
 
     /**
      * @return string
@@ -100,7 +106,7 @@ class User extends AbstractEntity
      */
     public function setPassword($password)
     {
-        $this->password = md5($password);
+        $this->password = $password;
     }
 
     /**
@@ -149,6 +155,102 @@ class User extends AbstractEntity
     public function setPhone($phone)
     {
         $this->phone = $phone;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBusiness()
+    {
+        return $this->business;
+    }
+
+    /**
+     * @param string $business
+     */
+    public function setBusiness($business)
+    {
+        $this->business = $business;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @param string $address
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * @param string $city
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * @param string $country
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * @return string
+     */
+    public function getZip()
+    {
+        return $this->zip;
+    }
+
+    /**
+     * @param string $zip
+     */
+    public function setZip($zip)
+    {
+        $this->zip = $zip;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
+     * @param string $token
+     */
+    public function setToken($token)
+    {
+        $this->token = $token;
     }
 
 }

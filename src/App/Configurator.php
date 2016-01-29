@@ -3,6 +3,7 @@
 namespace App;
 
 
+use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
@@ -51,24 +52,31 @@ class Configurator {
             return new ResponseDataFormatter();
         };
 
-        // error handler
-        $container['errorHandler'] = function ($c) {
-            return function ($request, ResponseInterface $response, \Exception $e) use ($c) {
-                /**
-                 * @var Logger $logger
-                 */
-                $logger = $c->get('logger');
-                $logger->err(sprintf('%s code %s in file %s:%s', $e->getMessage(),
-                    $e->getCode(), $e->getFile(), $e->getLine()));
-                $logger->debug($e->getTraceAsString());
-
-                /**
-                 * @var ResponseDataFormatter $formatter
-                 */
-                $formatter = $c->get('dataFormatter');
-                return $response->withJson($formatter->getFailure('Service error'), 500);
-            };
+        $container['encryptionHelper'] = function() {
+            return new EncryptionHelper();
         };
+
+        // error handler
+        if (!$container->get('settings')['displayErrorDetails']) {
+            $container['errorHandler'] = function ($c) {
+                return function ($request, ResponseInterface $response, \Exception $e) use ($c) {
+                    /**
+                     * @var Logger $logger
+                     */
+                    $logger = $c->get('logger');
+                    $logger->err(sprintf('%s code %s in file %s:%s', $e->getMessage(),
+                        $e->getCode(), $e->getFile(), $e->getLine()));
+                    $logger->debug($e->getTraceAsString());
+
+                    /**
+                     * @var ResponseDataFormatter $formatter
+                     */
+                    $formatter = $c->get('dataFormatter');
+                    return $response->withJson($formatter->getFailure('Service error'), 500);
+                };
+            };
+        }
+
         return $this;
     }
 

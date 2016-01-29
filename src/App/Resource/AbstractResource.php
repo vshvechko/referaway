@@ -100,17 +100,6 @@ abstract class AbstractResource
     }
 
     /**
-     * @param int $status
-     * @param array $data
-     * @return Response
-     */
-    public function response($status = 200, array $data = array())
-    {
-        $response = $this->getResponse()->withHeader('Content-Type', 'application/json');
-        return $response->withJson($data, $status);
-    }
-
-    /**
      * @param $resource
      * @param ServerRequestInterface $request
      * @param Response $response

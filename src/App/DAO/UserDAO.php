@@ -37,21 +37,7 @@ class UserDAO extends AbstractDAO
             return null;
         }
 
-        /**
-         * @var \App\Entity\User $user
-         */
-        $data = array();
-        foreach ($users as $user)
-        {
-            $data[] = array(
-                'id' => $user->getId(),
-                'created' => $user->getCreated(),
-                'updated' => $user->getUpdated(),
-                'email' => $user->getEmail(),
-            );
-        }
-
-        return $data;
+        return $users;
     }
 
     /**
@@ -60,19 +46,6 @@ class UserDAO extends AbstractDAO
      */
     public function createUser($data)
     {
-        if (empty($data['email']))
-            throw new \InvalidArgumentException('"email" missed');
-        if (empty($data['password']))
-            throw new \InvalidArgumentException('"password" missed');
-        if (empty($data['firstName']))
-            throw new \InvalidArgumentException('"firstName" missed');
-        if (empty($data['phone']))
-            throw new \InvalidArgumentException('"phone" missed');
-        if (empty($data['lastName']))
-            throw new \InvalidArgumentException('"lastName" missed');
-        if ($this->isEmailExist($data['email']))
-            throw new \InvalidArgumentException('email "' . $data['email'] . '"" exists already');
-
         $user = new UserEntity();
         $user->populate($data);
 
@@ -84,12 +57,10 @@ class UserDAO extends AbstractDAO
 
     /**
      * @param $id
-     * @param $email
-     * @param $password
+     * @param array $data
      * @return array|null
      */
-    public function updateUser($id, $email, $password)
-    {
+    public function updateUser($id, array $data) {
         /**
          * @var \App\Entity\User $user
          */
@@ -100,19 +71,13 @@ class UserDAO extends AbstractDAO
             return null;
         }
 
-        $user->setEmail($email);
-        $user->setPassword($password);
+        $user->populate($data);
         $user->setUpdated(new \DateTime());
 
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
 
-        return array(
-            'id' => $user->getId(),
-            'created' => $user->getCreated(),
-            'updated' => $user->getUpdated(),
-            'email' => $user->getEmail()
-        );
+        return $user;
     }
 
     public function deleteUser($id)
@@ -138,7 +103,16 @@ class UserDAO extends AbstractDAO
         return $user !== null;
     }
 
-    public function findByToken() {
-        throw new \AssertionError("NOT IMPLEMENTED");
+    public function findByToken($token) {
+        return $this->getEntityManager()->getRepository('App\Entity\User')->findOneBy(array('token' => $token));
     }
+
+    /**
+     * @param $email
+     * @return null|UserEntity
+     */
+    public function findByEmail($email) {
+        return $this->getEntityManager()->getRepository('App\Entity\User')->findOneBy(array('email' => $email));
+    }
+
 }
