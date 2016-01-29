@@ -6,8 +6,7 @@ use App\Exception\StatusException;
 use App\Resource;
 use App\DAO\UserDAO;
 
-class User extends AbstractResource
-{
+class User extends AbstractResource {
     /**
      * @var UserDAO
      */
@@ -16,8 +15,7 @@ class User extends AbstractResource
     /**
      * Get user service
      */
-    public function init()
-    {
+    public function init() {
         $this->setUserService(new UserDAO($this->getEntityManager()));
     }
 
@@ -26,8 +24,7 @@ class User extends AbstractResource
      * @return \Slim\Http\Response|void
      * @throws StatusException
      */
-    public function get($id = null)
-    {
+    public function get($id = null) {
         if ($id === null) {
             $users = $this->getUserService()->getUsers();
             /**
@@ -62,8 +59,7 @@ class User extends AbstractResource
     /**
      * Create user
      */
-    public function post()
-    {
+    public function post() {
         $obj = $this->getRequest()->getParsedBody();
 
         try {
@@ -82,8 +78,7 @@ class User extends AbstractResource
     /**
      * Update user
      */
-    public function put($id)
-    {
+    public function put($id) {
         $data = $this->getRequest()->getParsedBody();
 
         $user = $this->getUserService()->updateUser($id, $data);
@@ -106,8 +101,7 @@ class User extends AbstractResource
      * @return bool|void
      * @throws StatusException
      */
-    public function delete($id)
-    {
+    public function delete($id) {
         $status = $this->getUserService()->deleteUser($id);
 
         if ($status === false) {
@@ -120,16 +114,14 @@ class User extends AbstractResource
     /**
      * @return UserDAO
      */
-    public function getUserService()
-    {
+    public function getUserService() {
         return $this->userService;
     }
 
     /**
      * @param UserDAO $userService
      */
-    public function setUserService($userService)
-    {
+    public function setUserService($userService) {
         $this->userService = $userService;
     }
 

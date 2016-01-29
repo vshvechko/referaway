@@ -16,24 +16,21 @@ class Register extends AbstractResource {
     /**
      * Get user service
      */
-    public function init()
-    {
+    public function init() {
         $this->setUserService(new UserDAO($this->getEntityManager()));
     }
 
     /**
      * @return UserDAO
      */
-    public function getUserService()
-    {
+    public function getUserService() {
         return $this->userService;
     }
 
     /**
      * @param UserDAO $userService
      */
-    public function setUserService($userService)
-    {
+    public function setUserService($userService) {
         $this->userService = $userService;
     }
 

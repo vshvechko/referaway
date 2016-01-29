@@ -9,8 +9,7 @@ use Doctrine\ORM\Mapping;
  * @Entity
  * @Table(name="user")
  */
-class User extends AbstractEntity
-{
+class User extends AbstractEntity {
     /**
      * @Column(type="string", length=255)
      * @var string
@@ -80,176 +79,154 @@ class User extends AbstractEntity
     /**
      * @return string
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
     /**
      * @param string $email
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
     }
 
     /**
      * @return string
      */
-    public function getPassword()
-    {
+    public function getPassword() {
         return $this->password;
     }
 
     /**
      * @param string $password
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
     }
 
     /**
      * @return string
      */
-    public function getFirstName()
-    {
+    public function getFirstName() {
         return $this->firstName;
     }
 
     /**
      * @param string $firstName
      */
-    public function setFirstName($firstName)
-    {
+    public function setFirstName($firstName) {
         $this->firstName = $firstName;
     }
 
     /**
      * @return mixed
      */
-    public function getLastName()
-    {
+    public function getLastName() {
         return $this->lastName;
     }
 
     /**
      * @param mixed $lastName
      */
-    public function setLastName($lastName)
-    {
+    public function setLastName($lastName) {
         $this->lastName = $lastName;
     }
 
     /**
      * @return string
      */
-    public function getPhone()
-    {
+    public function getPhone() {
         return $this->phone;
     }
 
     /**
      * @param string $phone
      */
-    public function setPhone($phone)
-    {
+    public function setPhone($phone) {
         $this->phone = $phone;
     }
 
     /**
      * @return string
      */
-    public function getBusiness()
-    {
+    public function getBusiness() {
         return $this->business;
     }
 
     /**
      * @param string $business
      */
-    public function setBusiness($business)
-    {
+    public function setBusiness($business) {
         $this->business = $business;
     }
 
     /**
      * @return string
      */
-    public function getAddress()
-    {
+    public function getAddress() {
         return $this->address;
     }
 
     /**
      * @param string $address
      */
-    public function setAddress($address)
-    {
+    public function setAddress($address) {
         $this->address = $address;
     }
 
     /**
      * @return string
      */
-    public function getCity()
-    {
+    public function getCity() {
         return $this->city;
     }
 
     /**
      * @param string $city
      */
-    public function setCity($city)
-    {
+    public function setCity($city) {
         $this->city = $city;
     }
 
     /**
      * @return string
      */
-    public function getCountry()
-    {
+    public function getCountry() {
         return $this->country;
     }
 
     /**
      * @param string $country
      */
-    public function setCountry($country)
-    {
+    public function setCountry($country) {
         $this->country = $country;
     }
 
     /**
      * @return string
      */
-    public function getZip()
-    {
+    public function getZip() {
         return $this->zip;
     }
 
     /**
      * @param string $zip
      */
-    public function setZip($zip)
-    {
+    public function setZip($zip) {
         $this->zip = $zip;
     }
 
     /**
      * @return string
      */
-    public function getToken()
-    {
+    public function getToken() {
         return $this->token;
     }
 
     /**
      * @param string $token
      */
-    public function setToken($token)
-    {
+    public function setToken($token) {
         $this->token = $token;
     }
 

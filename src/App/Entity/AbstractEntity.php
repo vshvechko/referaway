@@ -8,8 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @MappedSuperclass
  * @HasLifecycleCallbacks()
  */
-abstract class AbstractEntity
-{
+abstract class AbstractEntity {
     /**
      * @var integer
      *
@@ -34,8 +33,7 @@ abstract class AbstractEntity
     /**
      * Constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->setCreated(new \DateTime());
         $this->setUpdated(new \DateTime());
     }
@@ -43,8 +41,7 @@ abstract class AbstractEntity
     /**
      * @PreUpdate
      */
-    public function setUpdatedValue()
-    {
+    public function setUpdatedValue() {
         $this->setUpdated(new \DateTime());
     }
 
@@ -53,40 +50,35 @@ abstract class AbstractEntity
      *
      * @return integer
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * @param $created
      */
-    public function setCreated($created)
-    {
+    public function setCreated($created) {
         $this->created = $created;
     }
 
     /**
      * @return \DateTime
      */
-    public function getCreated()
-    {
+    public function getCreated() {
         return $this->created;
     }
 
     /**
      * @param $updated
      */
-    public function setUpdated($updated)
-    {
+    public function setUpdated($updated) {
         $this->updated = $updated;
     }
 
     /**
      * @return \DateTime
      */
-    public function getUpdated()
-    {
+    public function getUpdated() {
         return $this->updated;
     }
 

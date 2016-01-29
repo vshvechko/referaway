@@ -30,7 +30,7 @@ class Configurator {
         };
 
         // entity manager
-        $container['entityManager'] = function(ContainerInterface $c) {
+        $container['entityManager'] = function (ContainerInterface $c) {
             $settings = $c->get('settings')['database'];
 
             $config = new Configuration();
@@ -44,15 +44,15 @@ class Configurator {
             return EntityManager::create($settings, $config);
         };
 
-        $container['foundHandler'] = function() {
+        $container['foundHandler'] = function () {
             return new RequestResponseArgs();
         };
 
-        $container['dataFormatter'] = function() {
+        $container['dataFormatter'] = function () {
             return new ResponseDataFormatter();
         };
 
-        $container['encryptionHelper'] = function() {
+        $container['encryptionHelper'] = function () {
             return new EncryptionHelper();
         };
 

@@ -8,8 +8,7 @@ use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Http\Response;
 
-abstract class AbstractResource
-{
+abstract class AbstractResource {
     const STATUS_OK = 200;
     const STATUS_CREATED = 201;
     const STATUS_ACCEPTED = 202;
@@ -46,9 +45,8 @@ abstract class AbstractResource
      * @var ContainerInterface
      */
     protected $serviceLocator;
-    
-    public function __construct(ServerRequestInterface $request, Response $response, ContainerInterface $di)
-    {
+
+    public function __construct(ServerRequestInterface $request, Response $response, ContainerInterface $di) {
         $this->setRequest($request);
         $this->setResponse($response);
         $this->setServiceLocator($di);
@@ -56,46 +54,41 @@ abstract class AbstractResource
         $this->init();
     }
 
-    public function init()
-    {}
+    public function init() {
+    }
 
     /**
      * Default get method
      */
-    public function get()
-    {
+    public function get() {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default post method
      */
-    public function post()
-    {
+    public function post() {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default put method
      */
-    public function put($id)
-    {
+    public function put($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default delete method
      */
-    public function delete($id)
-    {
+    public function delete($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * General options method
      */
-    public function options()
-    {
+    public function options() {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
@@ -107,8 +100,7 @@ abstract class AbstractResource
      * @return AbstractResource
      * @throws StatusException
      */
-    public static function load($resource, ServerRequestInterface $request, Response $response, ContainerInterface $di)
-    {
+    public static function load($resource, ServerRequestInterface $request, Response $response, ContainerInterface $di) {
         $class = 'App\\Resource\\' . ucfirst($resource);
         if (!class_exists($class)) {
             throw new StatusException('Resource not exists', self::STATUS_NOT_FOUND);
@@ -120,8 +112,7 @@ abstract class AbstractResource
     /**
      * @return EntityManager
      */
-    public function getEntityManager()
-    {
+    public function getEntityManager() {
         return $this->serviceLocator->get('entityManager');
     }
 
@@ -129,8 +120,7 @@ abstract class AbstractResource
      * @return ServerRequestInterface
      * @throws \AssertionError
      */
-    public function getRequest()
-    {
+    public function getRequest() {
         if (!$this->request) {
             throw new \AssertionError();
         }
@@ -140,8 +130,7 @@ abstract class AbstractResource
     /**
      * @param ServerRequestInterface $request
      */
-    public function setRequest($request)
-    {
+    public function setRequest($request) {
         $this->request = $request;
     }
 
@@ -149,8 +138,7 @@ abstract class AbstractResource
      * @return Response
      * @throws \AssertionError
      */
-    public function getResponse()
-    {
+    public function getResponse() {
         if (!$this->response) {
             throw new \AssertionError();
         }
@@ -160,26 +148,23 @@ abstract class AbstractResource
     /**
      * @param Response $response
      */
-    public function setResponse($response)
-    {
+    public function setResponse($response) {
         $this->response = $response;
     }
 
     /**
      * @return ContainerInterface
      */
-    public function getServiceLocator()
-    {
+    public function getServiceLocator() {
         return $this->serviceLocator;
     }
 
     /**
      * @param ContainerInterface $serviceLocator
      */
-    public function setServiceLocator($serviceLocator)
-    {
+    public function setServiceLocator($serviceLocator) {
         $this->serviceLocator = $serviceLocator;
     }
-    
-    
+
+
 }

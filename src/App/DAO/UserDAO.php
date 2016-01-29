@@ -4,14 +4,12 @@ namespace App\DAO;
 
 use App\Entity\User as UserEntity;
 
-class UserDAO extends AbstractDAO
-{
+class UserDAO extends AbstractDAO {
     /**
      * @param $id
      * @return UserEntity
      */
-    public function getUser($id)
-    {
+    public function getUser($id) {
         /**
          * @var \App\Entity\User $user
          */
@@ -28,8 +26,7 @@ class UserDAO extends AbstractDAO
     /**
      * @return array|null
      */
-    public function getUsers()
-    {
+    public function getUsers() {
         $repository = $this->getEntityManager()->getRepository('App\Entity\User');
         $users = $repository->findAll();
 
@@ -44,8 +41,7 @@ class UserDAO extends AbstractDAO
      * @param $data
      * @return UserEntity
      */
-    public function createUser($data)
-    {
+    public function createUser($data) {
         $user = new UserEntity();
         $user->populate($data);
 
@@ -80,8 +76,7 @@ class UserDAO extends AbstractDAO
         return $user;
     }
 
-    public function deleteUser($id)
-    {
+    public function deleteUser($id) {
         /**
          * @var \App\Entity\User $user
          */
