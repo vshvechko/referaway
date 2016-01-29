@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping;
 
 /**
@@ -10,6 +11,12 @@ use Doctrine\ORM\Mapping;
  * @Table(name="user")
  */
 class User extends AbstractEntity {
+
+    public function __construct() {
+        parent::__construct();
+        $this->groups = new ArrayCollection();
+    }
+
     /**
      * @Column(type="string", length=255)
      * @var string
@@ -75,6 +82,19 @@ class User extends AbstractEntity {
      * @var string
      */
     protected $token;
+
+    /**
+     * @var ArrayCollection
+     * @ManyToMany(targetEntity="Group", inversedBy="members")
+     * @JoinTable(name="user_group")
+     */
+    protected $groups;
+
+    /**
+     * @var ArrayCollection
+     * @OneToMany(targetEntity="Group", mappedBy="owner")
+     */
+    protected $groupsOwned;
 
     /**
      * @return string
