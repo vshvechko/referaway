@@ -63,7 +63,9 @@ class Login extends AbstractResource {
             $this->getUserService()->updateUser($user->getId(), ['token' => $token]);
 
             return array(
-                'authToken' => $token,
+                'accessToken' => $token,
+                'tokenType' => 'Bearer',
+                'expiresIn' => null
             );
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);

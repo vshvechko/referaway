@@ -60,7 +60,7 @@ abstract class AbstractResource {
     /**
      * Default get method
      */
-    public function get() {
+    public function get($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
@@ -166,5 +166,16 @@ abstract class AbstractResource {
         $this->serviceLocator = $serviceLocator;
     }
 
+    protected function getAuthToken() {
+        $requestHeaders = apache_request_headers();
+        $authorizationHeader = $requestHeaders['Authorization'];
 
+        if (empty($requestHeaders['Authorization'])) {
+            throw new StatusException(self::STATUS_UNAUTHORIZED);
+        }
+
+        // validate the token
+        $token = str_replace('Bearer ', '', $authorizationHeader);
+        return $token;
+    }
 }

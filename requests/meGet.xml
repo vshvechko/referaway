@@ -1,0 +1,37 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list />
+  </option>
+  <option name="httpMethod" value="GET" />
+  <option name="urlBase" value="http://localhost:81" />
+  <option name="urlPath" value="/me" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-Type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Bearer 1XpMLAk03dEkVMDhVPCsPGDGFIhIRvHxHy25ZDYL" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{   &quot;email&quot;: &quot;vladimir.shvechko@gmail.com&quot;,   &quot;password&quot;: &quot;katb&quot;,   &quot;phone&quot;: &quot;+375298991203&quot;,   &quot;firstName&quot;: &quot;Vladimir&quot;,   &quot;lastName&quot;:&quot;Shvechko&quot; }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

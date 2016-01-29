@@ -7,6 +7,7 @@ use App\Resource;
 use App\DAO\UserDAO;
 
 class User extends AbstractResource {
+    use Resource\ViewModel\Helper\User;
     /**
      * @var UserDAO
      */
@@ -32,12 +33,7 @@ class User extends AbstractResource {
              */
             $data = [];
             foreach ($users as $user) {
-                $data[] = [
-                    'id' => $user->getId(),
-                    'created' => $user->getCreated(),
-                    'updated' => $user->getUpdated(),
-                    'email' => $user->getEmail(),
-                ];
+                $data[] = $this->exportUserArray($user);
             }
 
         } else {
@@ -45,12 +41,7 @@ class User extends AbstractResource {
             if ($user === null) {
                 throw new StatusException('User not found', self::STATUS_NOT_FOUND);
             }
-            $data = [
-                'id' => $user->getId(),
-                'created' => $user->getCreated(),
-                'updated' => $user->getUpdated(),
-                'email' => $user->getEmail()
-            ];
+            $data = $this->exportUserArray($user);
         }
 
         return $data;
@@ -64,12 +55,7 @@ class User extends AbstractResource {
 
         try {
             $user = $this->getUserService()->createUser($obj);
-            return [
-                'id' => $user->getId(),
-                'created' => $user->getCreated(),
-                'updated' => $user->getUpdated(),
-                'email' => $user->getEmail()
-            ];
+            return $this->exportUserArray($user);
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
@@ -87,12 +73,7 @@ class User extends AbstractResource {
             throw new StatusException('Not found', self::STATUS_NOT_FOUND);
         }
 
-        return [
-            'id' => $user->getId(),
-            'created' => $user->getCreated(),
-            'updated' => $user->getUpdated(),
-            'email' => $user->getEmail()
-        ];
+        return $this->exportUserArray($user);
 
     }
 

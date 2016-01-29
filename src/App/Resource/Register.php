@@ -8,6 +8,7 @@ use App\Exception\StatusException;
 use App\Resource;
 
 class Register extends AbstractResource {
+    use Resource\ViewModel\Helper\User;
     /**
      * @var UserDAO
      */
@@ -54,12 +55,7 @@ class Register extends AbstractResource {
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
 
             $user = $this->getUserService()->createUser($data);
-            return array(
-                'id' => $user->getId(),
-                'created' => $user->getCreated(),
-                'updated' => $user->getUpdated(),
-                'email' => $user->getEmail()
-            );
+            return $this->exportUserArray($user);
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
