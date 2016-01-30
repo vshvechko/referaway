@@ -3,38 +3,12 @@
 namespace App\DAO;
 
 use App\Entity\User as UserEntity;
+use Doctrine\ORM\Query;
 
 class UserDAO extends AbstractDAO {
-    /**
-     * @param $id
-     * @return UserEntity
-     */
-    public function getUser($id) {
-        /**
-         * @var \App\Entity\User $user
-         */
-        $repository = $this->getEntityManager()->getRepository('App\Entity\User');
-        $user = $repository->find($id);
 
-        if ($user === null) {
-            return null;
-        }
-
-        return $user;
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getUsers() {
-        $repository = $this->getEntityManager()->getRepository('App\Entity\User');
-        $users = $repository->findAll();
-
-        if (empty($users)) {
-            return null;
-        }
-
-        return $users;
+    protected function getRepositoryName() {
+        return 'App\Entity\User';
     }
 
     /**
@@ -45,8 +19,7 @@ class UserDAO extends AbstractDAO {
         $user = new UserEntity();
         $user->populate($data);
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->save($user);
 
         return $user;
     }
@@ -60,8 +33,7 @@ class UserDAO extends AbstractDAO {
         /**
          * @var \App\Entity\User $user
          */
-        $repository = $this->getEntityManager()->getRepository('App\Entity\User');
-        $user = $repository->find($id);
+        $user = $this->findById($id);
 
         if ($user === null) {
             return null;
@@ -70,8 +42,7 @@ class UserDAO extends AbstractDAO {
         $user->populate($data);
         $user->setUpdated(new \DateTime());
 
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->save($user);
 
         return $user;
     }
@@ -80,34 +51,46 @@ class UserDAO extends AbstractDAO {
         /**
          * @var \App\Entity\User $user
          */
-        $repository = $this->getEntityManager()->getRepository('App\Entity\User');
-        $user = $repository->find($id);
+        $user = $this->findById($id);
 
         if ($user === null) {
             return false;
         }
 
-        $this->getEntityManager()->remove($user);
-        $this->getEntityManager()->flush();
+        $this->remove($user);
 
         return true;
     }
 
     public function isEmailExist($email) {
-        $user = $this->getEntityManager()->getRepository('App\Entity\User')->findOneBy(array('email' => $email));
+        $user = $this->findByEmail($email);
         return $user !== null;
     }
 
-    public function findByToken($token) {
-        return $this->getEntityManager()->getRepository('App\Entity\User')->findOneBy(array('token' => $token));
+    /**
+     * @param $token
+     * @return null|UserEntity
+     */
+    public function findByToken($token, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e')
+            ->from($this->getRepositoryName(), 'e')
+            ->where($qb->expr()->eq('e.token', ':token'))->setParameter('token', $token);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }
 
     /**
      * @param $email
      * @return null|UserEntity
      */
-    public function findByEmail($email) {
-        return $this->getEntityManager()->getRepository('App\Entity\User')->findOneBy(array('email' => $email));
+    public function findByEmail($email, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e')
+            ->from($this->getRepositoryName(), 'e')
+            ->where($qb->expr()->eq('e.email', ':email'))->setParameter('email', $email);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }
 
 }

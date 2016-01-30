@@ -17,7 +17,7 @@ class User extends AbstractResource {
      * Get user service
      */
     public function init() {
-        $this->setUserService(new UserDAO($this->getEntityManager()));
+        $this->setService(new UserDAO($this->getEntityManager()));
     }
 
     /**
@@ -27,7 +27,7 @@ class User extends AbstractResource {
      */
     public function get($id = null) {
         if ($id === null) {
-            $users = $this->getUserService()->getUsers();
+            $users = $this->getService()->findAll();
             /**
              * @var \App\Entity\User $user
              */
@@ -37,7 +37,7 @@ class User extends AbstractResource {
             }
 
         } else {
-            $user = $this->getUserService()->getUser($id);
+            $user = $this->getService()->findById($id);
             if ($user === null) {
                 throw new StatusException('User not found', self::STATUS_NOT_FOUND);
             }
@@ -54,7 +54,7 @@ class User extends AbstractResource {
         $obj = $this->getRequest()->getParsedBody();
 
         try {
-            $user = $this->getUserService()->createUser($obj);
+            $user = $this->getService()->createUser($obj);
             return $this->exportUserArray($user);
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
@@ -67,7 +67,7 @@ class User extends AbstractResource {
     public function put($id) {
         $data = $this->getRequest()->getParsedBody();
 
-        $user = $this->getUserService()->updateUser($id, $data);
+        $user = $this->getService()->updateUser($id, $data);
 
         if ($user === null) {
             throw new StatusException('Not found', self::STATUS_NOT_FOUND);
@@ -83,7 +83,7 @@ class User extends AbstractResource {
      * @throws StatusException
      */
     public function delete($id) {
-        $status = $this->getUserService()->deleteUser($id);
+        $status = $this->getService()->deleteUser($id);
 
         if ($status === false) {
             throw new StatusException('Not found', self::STATUS_NOT_FOUND);
@@ -95,14 +95,14 @@ class User extends AbstractResource {
     /**
      * @return UserDAO
      */
-    public function getUserService() {
+    public function getService() {
         return $this->userService;
     }
 
     /**
      * @param UserDAO $userService
      */
-    public function setUserService($userService) {
+    public function setService($userService) {
         $this->userService = $userService;
     }
 

@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Entity
- * @Table(name="group")
+ * @Table(name="`group`")
  */
 class Group extends AbstractEntity {
 
@@ -24,7 +24,7 @@ class Group extends AbstractEntity {
 
     /**
      * @var User
-     * @ManyToOne(targetEntity="User", inversedBy="groupsOwned")
+     * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="owner_id", referencedColumnName="id")
      */
     protected $owner;
@@ -61,6 +61,14 @@ class Group extends AbstractEntity {
      */
     public function setOwner(User $owner) {
         $this->owner = $owner;
+        $owner->addGroup($this);
     }
 
+    public function getMembers() {
+        return $this->members->toArray();
+    }
+
+    public function addMember(User $user) {
+        $this->members->add($user);
+    }
 }

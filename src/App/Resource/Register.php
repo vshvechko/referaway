@@ -55,7 +55,7 @@ class Register extends AbstractResource {
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
 
             $user = $this->getUserService()->createUser($data);
-            return $this->exportUserArray($user);
+            return ['user' => $this->exportUserArray($user)];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Resource;
 
+use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
@@ -166,16 +167,24 @@ abstract class AbstractResource {
         $this->serviceLocator = $serviceLocator;
     }
 
-    protected function getAuthToken() {
-        $requestHeaders = apache_request_headers();
-        $authorizationHeader = $requestHeaders['Authorization'];
+    protected function authenticateUser() {
+        $logger = $this->getServiceLocator()->get('logger');
+        $logger->debug(__CLASS__ . '::authenticateUser');
+        try {
+            $service = $this->getServiceLocator()->get('authService');
+            $token = $service->getAuthToken();
 
-        if (empty($requestHeaders['Authorization'])) {
-            throw new StatusException(self::STATUS_UNAUTHORIZED);
+            $dao = new UserDAO($this->getEntityManager());
+            $user = $dao->findByToken($token);
+            if (is_null($user))
+                throw new \Exception('User not found');
+
+            return $user;
+        } catch (\Exception $e) {
+            $logger->err(sprintf('%s in %s:%s', $e->getMessage(), $e->getFile(), $e->getLine()));
+            $logger->debug($e->getTraceAsString());
+
+            throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED, $e);
         }
-
-        // validate the token
-        $token = str_replace('Bearer ', '', $authorizationHeader);
-        return $token;
     }
 }

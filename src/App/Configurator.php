@@ -5,6 +5,7 @@ namespace App;
 
 use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
+use App\Manager\AuthenticationManager;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
@@ -32,14 +33,24 @@ class Configurator {
         // entity manager
         $container['entityManager'] = function (ContainerInterface $c) {
             $settings = $c->get('settings')['database'];
+            $applicationMode = $c->get('settings')['applicationMode'];
 
-            $config = new Configuration();
-            $config->setMetadataCacheImpl(new ArrayCache());
+            $cache = new ArrayCache; // TODO
+
+            $config = new Configuration;
+            $config->setMetadataCacheImpl($cache);
             $driverImpl = $config->newDefaultAnnotationDriver(array(__DIR__ . '/Entity'));
             $config->setMetadataDriverImpl($driverImpl);
-
+            $config->setQueryCacheImpl($cache);
+            $config->setResultCacheImpl($cache);
             $config->setProxyDir(__DIR__ . '/Entity/Proxy');
-            $config->setProxyNamespace('Proxy');
+            $config->setProxyNamespace('App\Entity\Proxy');
+
+            if ($applicationMode == 'development') {
+                $config->setAutoGenerateProxyClasses(true);
+            } else {
+                $config->setAutoGenerateProxyClasses(false);
+            }
 
             return EntityManager::create($settings, $config);
         };
@@ -54,6 +65,10 @@ class Configurator {
 
         $container['encryptionHelper'] = function () {
             return new EncryptionHelper();
+        };
+
+        $container['authService'] = function ($c) {
+            return new AuthenticationManager($c);
         };
 
         // error handler

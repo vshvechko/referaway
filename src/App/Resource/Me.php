@@ -37,17 +37,9 @@ class Me extends AbstractResource {
     }
 
     public function get($id) {
-        $authToken = $this->getAuthToken();
+        $user = $this->authenticateUser();
 
-        try {
-            $user = $this->getUserService()->findByToken($authToken);
-            if (is_null($user))
-                throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED);
-
-            return $this->exportUserArray($user);
-        } catch (\InvalidArgumentException $e) {
-            throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
-        }
+        return ['user' => $this->exportUserArray($user)];
     }
 
 }

@@ -91,12 +91,6 @@ class User extends AbstractEntity {
     protected $groups;
 
     /**
-     * @var ArrayCollection
-     * @OneToMany(targetEntity="Group", mappedBy="owner")
-     */
-    protected $groupsOwned;
-
-    /**
      * @return string
      */
     public function getEmail() {
@@ -248,6 +242,15 @@ class User extends AbstractEntity {
      */
     public function setToken($token) {
         $this->token = $token;
+    }
+
+    public function getGroups() {
+        return $this->groups->toArray();
+    }
+
+    public function addGroup(Group $group) {
+        $this->groups->add($group);
+        $group->addMember($this);
     }
 
 }

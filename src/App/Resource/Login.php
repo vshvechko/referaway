@@ -6,9 +6,10 @@ namespace App\Resource;
 use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use App\Helper\EncryptionHelper;
+use App\Resource\ViewModel\Helper\User;
 
 class Login extends AbstractResource {
-
+    use User;
     /**
      * @var UserDAO
      */
@@ -62,11 +63,14 @@ class Login extends AbstractResource {
             $token = $encryptionHelper->generateToken();
             $this->getUserService()->updateUser($user->getId(), ['token' => $token]);
 
-            return array(
-                'accessToken' => $token,
-                'tokenType' => 'Bearer',
-                'expiresIn' => null
-            );
+            return [
+                'user' => $this->exportUserArray($user),
+                'accessToken' => [
+                    'token' => $token,
+                    'type' => 'Bearer',
+                    'expiresIn' => null
+                ]
+            ];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
