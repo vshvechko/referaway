@@ -46,13 +46,13 @@ class Group extends AbstractResource {
             foreach ($entities as $entity) {
                 $data[] = $this->exportGroupArray($entity);
             }
-
+            $data = ['groups' => $data];
         } else {
-            $user = $this->getService()->findById($id);
-            if ($user === null) {
+            $entity = $this->getService()->findById($id);
+            if ($entity === null) {
                 throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
             }
-            $data = $this->exportGroupArray($user);
+            $data = ['group' => $this->exportGroupArray($entity)];
         }
 
         return $data;
@@ -63,12 +63,12 @@ class Group extends AbstractResource {
         $data = $this->getRequest()->getParsedBody();
 
         try {
-            $group = $this->getService()->createGroup($data, $user);
-            return $this->exportGroupArray($group);
+            $entity = $this->getService()->createGroup($data, $user);
+
+            return ['group' => $this->exportGroupArray($entity)];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
-
     }
 
 }

@@ -46,6 +46,7 @@ class Login extends AbstractResource {
                 throw new \InvalidArgumentException('Password missed');
 
             $encryptionHelper = $this->getServiceLocator()->get('encryptionHelper');
+            $authManager = $this->getServiceLocator()->get('authService');
 
             $user = $this->getUserService()->findByEmail($data['email']);
             if ($user) {
@@ -60,7 +61,7 @@ class Login extends AbstractResource {
             if (is_null($user))
                 throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED);
 
-            $token = $encryptionHelper->generateToken();
+            $token = $authManager->generateToken();
             $this->getUserService()->updateUser($user->getId(), ['token' => $token]);
 
             return [
