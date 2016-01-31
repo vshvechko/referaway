@@ -6,6 +6,7 @@ namespace App;
 use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
 use App\Manager\AuthenticationManager;
+use App\Manager\SMSManager;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
@@ -69,6 +70,10 @@ class Configurator {
 
         $container['authService'] = function ($c) {
             return new AuthenticationManager($c);
+        };
+
+        $container['smsService'] = function ($c) {
+            return new SMSManager($c);
         };
 
         // error handler

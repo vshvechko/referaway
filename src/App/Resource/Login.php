@@ -62,12 +62,13 @@ class Login extends AbstractResource {
                 throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED);
 
             $token = $authManager->generateToken();
-            $this->getUserService()->updateUser($user->getId(), ['token' => $token]);
+            $user->setToken($token);
+            $this->getUserService()->save($user);
 
             return [
                 'user' => $this->exportUserArray($user),
                 'accessToken' => [
-                    'token' => $token,
+                    'token' => $user->getToken(),
                     'type' => 'Bearer',
                     'expiresIn' => null
                 ]

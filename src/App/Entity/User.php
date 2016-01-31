@@ -12,9 +12,13 @@ use Doctrine\ORM\Mapping;
  */
 class User extends AbstractEntity {
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_INACTIVE = 0;
+
     public function __construct() {
         parent::__construct();
         $this->groups = new ArrayCollection();
+        $this->setIsActive(self::STATUS_INACTIVE);
     }
 
     /**
@@ -82,6 +86,18 @@ class User extends AbstractEntity {
      * @var string
      */
     protected $token;
+
+    /**
+     * @Column(name="is_active", type="integer", length=1, nullable=false)
+     * @var int
+     */
+    protected $isActive;
+
+    /**
+     * @Column(name="activation_code", type="string", length=40, nullable=true)
+     * @var string
+     */
+    protected $activationCode;
 
     /**
      * @var ArrayCollection
@@ -235,6 +251,34 @@ class User extends AbstractEntity {
      */
     public function getToken() {
         return $this->token;
+    }
+
+    /**
+     * @return int
+     */
+    public function getIsActive() {
+        return $this->isActive;
+    }
+
+    /**
+     * @param int $isActive
+     */
+    public function setIsActive($isActive) {
+        $this->isActive = $isActive;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getActivationCode() {
+        return $this->activationCode;
+    }
+
+    /**
+     * @param mixed $activationCode
+     */
+    public function setActivationCode($activationCode) {
+        $this->activationCode = $activationCode;
     }
 
     /**

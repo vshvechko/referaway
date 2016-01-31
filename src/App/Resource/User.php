@@ -2,6 +2,7 @@
 
 namespace App\Resource;
 
+use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
 use App\Resource;
 use App\DAO\UserDAO;
@@ -25,11 +26,11 @@ class User extends AbstractResource {
      * @return \Slim\Http\Response|void
      * @throws StatusException
      */
-    public function get($id = null) {
+    public function _get($id = null) {
         if ($id === null) {
             $users = $this->getService()->findAll();
             /**
-             * @var \App\Entity\User $user
+             * @var UserEntity $user
              */
             $data = [];
             foreach ($users as $user) {
@@ -50,7 +51,7 @@ class User extends AbstractResource {
     /**
      * Create user
      */
-    public function post() {
+    public function _post() {
         $obj = $this->getRequest()->getParsedBody();
 
         try {
@@ -64,7 +65,7 @@ class User extends AbstractResource {
     /**
      * Update user
      */
-    public function put($id) {
+    public function _put($id) {
         $data = $this->getRequest()->getParsedBody();
 
         $user = $this->getService()->updateUser($id, $data);
@@ -82,7 +83,7 @@ class User extends AbstractResource {
      * @return bool|void
      * @throws StatusException
      */
-    public function delete($id) {
+    public function _delete($id) {
         $status = $this->getService()->deleteUser($id);
 
         if ($status === false) {

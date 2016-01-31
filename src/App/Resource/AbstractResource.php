@@ -3,6 +3,7 @@
 namespace App\Resource;
 
 use App\DAO\UserDAO;
+use App\Entity\User;
 use App\Exception\StatusException;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
@@ -167,7 +168,7 @@ abstract class AbstractResource {
         $this->serviceLocator = $serviceLocator;
     }
 
-    protected function authenticateUser() {
+    protected function authenticateUser($activeOnly = true) {
         $logger = $this->getServiceLocator()->get('logger');
         $logger->debug(__CLASS__ . '::authenticateUser');
         try {
@@ -179,7 +180,12 @@ abstract class AbstractResource {
             if (is_null($user))
                 throw new \Exception('User not found');
 
+            if ($activeOnly && $user->getIsActive() != User::STATUS_ACTIVE)
+                throw new StatusException('User not activated', self::STATUS_UNAUTHORIZED);
+
             return $user;
+        } catch (StatusException $e) {
+            throw $e;
         } catch (\Exception $e) {
             $logger->err(sprintf('%s in %s:%s', $e->getMessage(), $e->getFile(), $e->getLine()));
             $logger->debug($e->getTraceAsString());

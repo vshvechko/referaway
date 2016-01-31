@@ -17,6 +17,7 @@ trait User {
             'country' => $user->getCountry(),
             'city' => $user->getCity(),
             'zip' => $user->getZip(),
+            'isActive' => $user->getIsActive()
         ];
     }
 }

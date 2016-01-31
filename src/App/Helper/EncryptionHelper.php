@@ -12,4 +12,8 @@ class EncryptionHelper {
     public function verify($password, $hash) {
         return password_verify($password, $hash);
     }
+
+    public function generateShortCode() {
+        return base_convert(time(), 10, 36);
+    }
 }
