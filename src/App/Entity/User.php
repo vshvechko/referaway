@@ -249,8 +249,18 @@ class User extends AbstractEntity {
     }
 
     public function addGroup(Group $group) {
+        if ($this->groups->contains($group)) {
+            return;
+        }
         $this->groups->add($group);
         $group->addMember($this);
     }
 
+    public function removeGroup(Group $group) {
+        if ($group->getOwner() == $this) {
+            throw new \InvalidArgumentException('Cannot remove owned group');
+        }
+        $this->groups->removeElement($group);
+        $group->removeMember($this);
+    }
 }

@@ -39,9 +39,8 @@ class GroupDAO extends AbstractDAO {
          */
         $entity = $this->findById($id);
 
-        if ($entity === null) {
-            return null;
-        }
+        if ($entity === null)
+            throw new \InvalidArgumentException('Group not found');
 
         $entity->populate($data);
         $entity->setUpdated(new \DateTime());

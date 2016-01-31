@@ -68,7 +68,17 @@ class Group extends AbstractEntity {
         return $this->members->toArray();
     }
 
+    /**
+     * @param User $user
+     */
     public function addMember(User $user) {
         $this->members->add($user);
+    }
+
+    public function removeMember(User $user) {
+        if ($this->owner == $user) {
+            throw new \InvalidArgumentException('Cannot remove group owner');
+        }
+        $this->members->removeElement($user);
     }
 }
