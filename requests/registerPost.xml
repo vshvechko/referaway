@@ -1,25 +1,26 @@
 <RestClientRequest>
-  <option name="biscuits">
-    <list />
-  </option>
-  <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost" />
-  <option name="urlPath" value="/register" />
-  <option name="headers">
-    <list>
-      <KeyValuePair>
-        <option name="key" value="Content-Type" />
-        <option name="value" value="application/json" />
-      </KeyValuePair>
-    </list>
-  </option>
-  <option name="parameters">
-    <list />
-  </option>
-  <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
-  <option name="haveFileToSend" value="false" />
-  <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{   &quot;email&quot;: &quot;vladimir.shvechko@gmail.com&quot;,   &quot;password&quot;: &quot;katb&quot;,   &quot;phone&quot;: &quot;+375298991203&quot;,   &quot;firstName&quot;: &quot;Vladimir&quot;,   &quot;lastName&quot;:&quot;Shvechko&quot; }" />
-  <option name="filesToSend" value="" />
+    <option name="biscuits">
+        <list/>
+    </option>
+    <option name="httpMethod" value="POST"/>
+    <option name="urlBase" value="http://localhost"/>
+    <option name="urlPath" value="/register"/>
+    <option name="headers">
+        <list>
+            <KeyValuePair>
+                <option name="key" value="Content-Type"/>
+                <option name="value" value="application/json"/>
+            </KeyValuePair>
+        </list>
+    </option>
+    <option name="parameters">
+        <list/>
+    </option>
+    <option name="parametersEnabled" value="true"/>
+    <option name="haveTextToSend" value="true"/>
+    <option name="haveFileToSend" value="false"/>
+    <option name="isFileUpload" value="false"/>
+    <option name="textToSend"
+            value="{   &quot;email&quot;: &quot;vladimir.shvechko@gmail.com&quot;,   &quot;password&quot;: &quot;katb&quot;,   &quot;phone&quot;: &quot;+375298991203&quot;,   &quot;firstName&quot;: &quot;Vladimir&quot;,   &quot;lastName&quot;:&quot;Shvechko&quot; }"/>
+    <option name="filesToSend" value=""/>
 </RestClientRequest>
