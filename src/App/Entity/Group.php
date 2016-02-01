@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @Table(name="`group`")
  */
 class Group extends AbstractEntity {
+    use WithAuthoincrementId;
 
     public function __construct() {
         parent::__construct();
@@ -31,7 +32,7 @@ class Group extends AbstractEntity {
 
     /**
      * @var ArrayCollection
-     * @ManyToMany(targetEntity="User", mappedBy="groups")
+     * @OneToMany(targetEntity="UserGroup", mappedBy="group", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $members;
 
@@ -61,24 +62,45 @@ class Group extends AbstractEntity {
      */
     public function setOwner(User $owner) {
         $this->owner = $owner;
-        $owner->addGroup($this);
+    }
+
+    public function canAdmin(User $user) {
+        if ($this->getOwner() == $user)
+            return true;
+
+        /**
+         * @var UserGroup $member
+         */
+        foreach ($this->getUserGroups() as $member) {
+            if ($member->getUser() == $user) {
+                return $member->getRole() == UserGroup::ROLE_ADMIN;
+            }
+        }
+        return false;
     }
 
     public function getMembers() {
-        return $this->members->toArray();
+        return array_map(
+            function (UserGroup $userGroup) {
+                return $userGroup->getUser();
+            },
+            $this->members->toArray()
+        );
     }
 
-    /**
-     * @param User $user
-     */
-    public function addMember(User $user) {
-        $this->members->add($user);
-    }
+    public function addUserGroup(UserGroup $userGroup) {
 
-    public function removeMember(User $user) {
-        if ($this->owner == $user) {
-            throw new \InvalidArgumentException('Cannot remove group owner');
+        if ($this->members->contains($userGroup)) {
+            return;
         }
-        $this->members->removeElement($user);
+        $this->members->add($userGroup);
+    }
+
+    public function removeUserGroup(UserGroup $group) {
+        $this->members->removeElement($group);
+    }
+
+    public function getUserGroups() {
+        return $this->members->toArray();
     }
 }
