@@ -10,6 +10,8 @@ return [
             'path' => __DIR__ . '/../logs/app.log',
             'debug' => 1
         ],
+
+        // database settings
         'database' => [
             'driver' => 'pdo_mysql',
             'host' => 'localhost',
