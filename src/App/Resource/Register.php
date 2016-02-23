@@ -41,8 +41,8 @@ class Register extends AbstractResource {
         try {
             if (empty($data['email']))
                 throw new \InvalidArgumentException('"email" missed');
-            if (empty($data['password']))
-                throw new \InvalidArgumentException('"password" missed');
+//            if (empty($data['password']))
+//                throw new \InvalidArgumentException('"password" missed');
             if (empty($data['firstName']))
                 throw new \InvalidArgumentException('"firstName" missed');
             if (empty($data['phone']))
@@ -52,7 +52,8 @@ class Register extends AbstractResource {
             if ($this->getUserService()->isEmailExist($data['email']))
                 throw new \InvalidArgumentException('email "' . $data['email'] . '"" exists already');
 
-            $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
+            $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
+            $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
 
             $user = $this->getUserService()->createUser($data);
 
@@ -76,7 +77,8 @@ class Register extends AbstractResource {
                     'expiresIn' => null
                 ],
                 // TODO remove code, send by sms instead
-                'code' => $user->getActivationCode()
+                'code' => $user->getActivationCode(),
+                'password' => $pass
             ];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
