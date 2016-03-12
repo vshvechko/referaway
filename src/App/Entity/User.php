@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping;
  * @Table(name="user")
  */
 class User extends AbstractEntity {
+    use WithAuthoincrementId;
 
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
@@ -101,8 +102,7 @@ class User extends AbstractEntity {
 
     /**
      * @var ArrayCollection
-     * @ManyToMany(targetEntity="Group", inversedBy="members")
-     * @JoinTable(name="user_group")
+     * @OneToMany(targetEntity="UserGroup", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $groups;
 
@@ -289,22 +289,23 @@ class User extends AbstractEntity {
     }
 
     public function getGroups() {
-        return $this->groups->toArray();
+        return array_map(
+            function (UserGroup $userGroup) {
+                return $userGroup->getGroup();
+            },
+            $this->groups->toArray()
+        );
     }
 
-    public function addGroup(Group $group) {
-        if ($this->groups->contains($group)) {
+    public function addUserGroup(UserGroup $userGroup) {
+
+        if ($this->groups->contains($userGroup)) {
             return;
         }
-        $this->groups->add($group);
-        $group->addMember($this);
+        $this->groups->add($userGroup);
     }
 
-    public function removeGroup(Group $group) {
-        if ($group->getOwner() == $this) {
-            throw new \InvalidArgumentException('Cannot remove owned group');
-        }
+    public function removeUserGroup(UserGroup $group) {
         $this->groups->removeElement($group);
-        $group->removeMember($this);
     }
 }

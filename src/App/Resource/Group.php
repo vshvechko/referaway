@@ -119,7 +119,7 @@ class Group extends AbstractResource {
 
             $entityData = $data[self::REQUEST_DATA];
 
-            if ($group->getOwner() != $user)
+            if (!$group->canAdmin($user))
                 throw new StatusException('Permission violated', self::STATUS_FORBIDDEN);
 
             $group->populate($entityData);
@@ -141,11 +141,7 @@ class Group extends AbstractResource {
      */
     private function doActionEnter($user, $group, $data) {
         try {
-            $service = $this->getService();
-
-            $user->addGroup($group);
-
-            $service->save($group);
+            $this->getService()->enterToGroup($user, $group);
 
             return ['group' => $this->exportGroupArray($group)];
         } catch (\InvalidArgumentException $e) {
@@ -162,11 +158,7 @@ class Group extends AbstractResource {
      */
     private function doActionExit($user, $group, $data) {
         try {
-            $service = $this->getService();
-
-            $user->removeGroup($group);
-
-            $service->save($group);
+            $this->getService()->exitFromGroup($user, $group);
 
             return ['group' => $this->exportGroupArray($group)];
         } catch (\InvalidArgumentException $e) {
