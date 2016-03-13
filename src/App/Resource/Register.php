@@ -61,14 +61,14 @@ class Register extends AbstractResource {
             $authManager = $this->getServiceLocator()->get('authService');
             $smsManager = $this->getServiceLocator()->get('smsService');
 
-            $code = $encoder->generateShortCode();
-            $user->setActivationCode($code);
+//            $code = $encoder->generateShortCode();
+//            $user->setActivationCode($code);
 
             $token = $authManager->generateToken();
             $user->setToken($token);
 
             $this->getUserService()->save($user);
-            $smsManager->sendActivationCode($user->getPhone(), $code);
+            $smsManager->sendPassword($user->getPhone(), $pass);
             return [
                 'user' => $this->exportUserArray($user),
                 'accessToken' => [
@@ -77,7 +77,7 @@ class Register extends AbstractResource {
                     'expiresIn' => null
                 ],
                 // TODO remove code, send by sms instead
-                'code' => $user->getActivationCode(),
+//                'code' => $user->getActivationCode(),
                 'password' => $pass
             ];
         } catch (\InvalidArgumentException $e) {

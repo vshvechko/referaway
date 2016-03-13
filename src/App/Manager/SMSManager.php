@@ -11,4 +11,11 @@ class SMSManager extends AbstractManager{
 
         $logger->err('SEND SHORT CODE METHOD NOT IMPLEMENTED');
     }
+
+    public function sendPassword($phone, $pass) {
+        $logger = $this->serviceLocator->get('logger');
+        $logger->debug(__CLASS__ . '->sendPassword');
+
+        $logger->err('sendPassword METHOD NOT IMPLEMENTED');
+    }
 }
