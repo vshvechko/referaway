@@ -6,6 +6,7 @@ namespace App;
 use App\Exception\StatusException;
 use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
+use App\Logger\Logger;
 use App\Manager\AuthenticationManager;
 use App\Manager\SMSManager;
 use Doctrine\Common\Cache\ArrayCache;
@@ -13,7 +14,6 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -55,6 +55,7 @@ class Configurator
 
             if ($applicationMode == 'development') {
                 $config->setAutoGenerateProxyClasses(true);
+                $config->setSQLLogger($c->get('logger'));
             } else {
                 $config->setAutoGenerateProxyClasses(false);
             }

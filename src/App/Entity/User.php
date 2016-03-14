@@ -19,7 +19,8 @@ class User extends AbstractEntity {
     public function __construct() {
         parent::__construct();
         $this->groups = new ArrayCollection();
-        $this->setIsActive(self::STATUS_INACTIVE);
+        $this->contacts = new ArrayCollection();
+        $this->setIsActive(self::STATUS_ACTIVE);
     }
 
     /**
@@ -105,6 +106,12 @@ class User extends AbstractEntity {
      * @OneToMany(targetEntity="UserGroup", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $groups;
+
+    /**
+     * @var ArrayCollection
+     * @OneToMany(targetEntity="Contact", mappedBy="owner", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    protected $contacts;
 
     /**
      * @return string
@@ -298,7 +305,6 @@ class User extends AbstractEntity {
     }
 
     public function addUserGroup(UserGroup $userGroup) {
-
         if ($this->groups->contains($userGroup)) {
             return;
         }
@@ -307,5 +313,21 @@ class User extends AbstractEntity {
 
     public function removeUserGroup(UserGroup $group) {
         $this->groups->removeElement($group);
+    }
+
+    public function getContacts() {
+        return $this->contacts->toArray();
+    }
+
+    public function addContact(Contact $contact) {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts->add($contact);
+        }
+        return $this;
+    }
+
+    public function removeContact(Contact $contact) {
+        $this->contacts->removeElement($contact);
+        return $this;
     }
 }

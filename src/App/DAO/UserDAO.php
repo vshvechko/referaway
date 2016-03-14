@@ -11,6 +11,10 @@ class UserDAO extends AbstractDAO {
         return 'App\Entity\User';
     }
 
+    protected function getContactRepositoryName() {
+        return 'App\Entity\Contact';
+    }
+
     /**
      * @param $data
      * @return UserEntity
@@ -40,7 +44,6 @@ class UserDAO extends AbstractDAO {
         }
 
         $user->populate($data);
-        $user->setUpdated(new \DateTime());
 
         $this->save($user);
 
@@ -93,4 +96,29 @@ class UserDAO extends AbstractDAO {
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }
 
+    public function getUserContact(UserEntity $user, $contactId, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e, owner, fields')
+            ->from($this->getContactRepositoryName(), 'e')
+            ->innerJoin('e.owner', 'owner')
+            ->leftJoin('e.customFields', 'fields')
+            ->where($qb->expr()->eq('owner.id', ':owner'))
+            ->andWhere($qb->expr()->eq('e.id', ':id'))
+            ->setParameter('owner', $user)
+            ->setParameter('id', $contactId);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
+
+    public function getUserContacts(UserEntity $user, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e, owner, fields')
+            ->from($this->getContactRepositoryName(), 'e')
+            ->innerJoin('e.owner', 'owner')
+            ->leftJoin('e.customFields', 'fields')
+            ->where($qb->expr()->eq('owner.id', ':owner'))
+            ->setParameter('owner', $user);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
 }
