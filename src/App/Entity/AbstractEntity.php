@@ -24,11 +24,16 @@ abstract class AbstractEntity {
             $reflObj = new \ReflectionObject($this);
             $reflMethods = $reflObj->getMethods();
 
-            $notPopulated = $this->getNotPopulatedFields();
+            $notPopulated = array_map(
+                function ($value) {
+                    return strtolower($value);
+                },
+                $this->getNotPopulatedFields()
+            );
 
             foreach ($data as $k => $v) {
-                if (!in_array($k, $notPopulated)) {
-                    $name = str_replace('_', '', strtolower($k));
+                $name = str_replace('_', '', strtolower($k));
+                if (!in_array($name, $notPopulated)) {
                     foreach ($reflMethods as $reflMethod) {
                         if (strtolower('set' . $name) == strtolower($reflMethod->getName()) && $reflMethod->isPublic()) {
                             $this->{$reflMethod->getName()}($v);

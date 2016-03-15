@@ -8,6 +8,7 @@ use App\Exception\StatusException;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Respect\Validation\Validatable;
 use Slim\Http\Response;
 
 abstract class AbstractResource {
@@ -47,6 +48,8 @@ abstract class AbstractResource {
      * @var ContainerInterface
      */
     protected $serviceLocator;
+
+    protected $validators = [];
 
     public function __construct(ServerRequestInterface $request, Response $response, ContainerInterface $di) {
         $this->setRequest($request);
@@ -192,5 +195,23 @@ abstract class AbstractResource {
 
             throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED, $e);
         }
+    }
+
+    protected function addValidator($key, $value) {
+        $this->validators[$key] = $value;
+    }
+
+    protected function validateArray(array $data) {
+        /**
+         * @var Validatable $validator
+         */
+        foreach ($this->validators as $key => $validator) {
+            $value = array_key_exists($key, $data) ? $data[$key] : null;
+            $validator->check($value);
+        }
+    }
+
+    protected function clearValidators() {
+        $this->validators = [];
     }
 }

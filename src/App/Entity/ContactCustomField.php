@@ -17,4 +17,22 @@ class ContactCustomField extends AbstractCustomField
      * @JoinColumn(name="contact_id", referencedColumnName="id", nullable=false)
      */
     protected $contact;
+
+    /**
+     * @return Contact
+     */
+    public function getContact() {
+        return $this->contact;
+    }
+
+    /**
+     * @param Contact $contact
+     * @return $this
+     */
+    public function setContact($contact) {
+        $this->contact = $contact;
+        return $this;
+    }
+
+
 }

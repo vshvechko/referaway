@@ -16,6 +16,8 @@ class Contact extends AbstractEntity
     const TYPE_VENDOR = 1;
     const TYPE_CUSTOMER = 2;
 
+    protected $notPopulatedFields = ['user', 'owner', 'customFields'];
+
     public function __construct()
     {
         parent::__construct();
