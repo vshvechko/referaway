@@ -1,0 +1,29 @@
+<RestClientRequest>
+  <option name="biscuits">
+    <list />
+  </option>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://localhost" />
+  <option name="urlPath" value="/contact" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Content-Type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Authorization" />
+        <option name="value" value="Bearer gzoIHLnAmxmsJPXRQbFQAxSUjGVAWdjdXeNA1QqQ" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{   &quot;email&quot;: &quot;test2@gmail.com&quot;,   &quot;phone&quot;: &quot;+375298991203&quot;,   &quot;firstName&quot;: &quot;test&quot;,   &quot;lastName&quot;:&quot;testlast&quot;, &quot;type&quot;: 1, &quot;business&quot;: &quot;test busines&quot;, &quot;customFields&quot;:[{&quot;type&quot;: &quot;email&quot;, &quot;value&quot;: &quot;testmail1&quot;},{&quot;type&quot;: &quot;email&quot;, &quot;value&quot;: &quot;testmail2&quot;},{&quot;type&quot;: &quot;phone&quot;, &quot;value&quot;: &quot;testphone&quot;}] }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>
