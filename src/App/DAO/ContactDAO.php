@@ -94,7 +94,6 @@ class ContactDAO extends AbstractDAO {
              * @var ContactCustomField $customField
              */
             foreach ($customFields as $customField) {
-                $email = $customField->getValue();
                 $user = $userDAO->findByEmail($customField->getValue());
                 if ($user) {
                     $entity->setUser($user);
