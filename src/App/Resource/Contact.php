@@ -136,4 +136,19 @@ class Contact extends AbstractResource
         }
     }
 
+    public function delete($id) {
+        $logger = $this->getServiceLocator()->get('logger');
+        $logger->debug(__METHOD__);
+
+        $user = $this->authenticateUser();
+        $contact = $this->service->findById($id);
+        if (!$contact) {
+            throw new StatusException('Contact not found', self::STATUS_NOT_FOUND);
+        }
+        if ($contact->getOwner()->getId() != $user->getId()) {
+            throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
+        }
+        $this->getService()->remove($contact);
+    }
+
 }
