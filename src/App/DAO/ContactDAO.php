@@ -71,13 +71,6 @@ class ContactDAO extends AbstractDAO {
         // set contact owner
         $entity->setOwner($owner);
 
-        // set related user
-        $userDAO = new UserDAO($this->getEntityManager());
-        $user = $userDAO->findByEmail($entity->getEmail());
-        if ($user) {
-            $entity->setUser($user);
-        }
-
         $this->save($entity);
 
         // set custom fields
@@ -92,7 +85,27 @@ class ContactDAO extends AbstractDAO {
             $entity->setCustomFields($customFields);
         }
 
-//        $this->save($entity);
+        // set related user
+        $emailFields = $entity->getEmailCustomFields();
+        if (count($emailFields)) {
+            $userDAO = new UserDAO($this->getEntityManager());
+
+            /**
+             * @var ContactCustomField $customField
+             */
+            foreach ($customFields as $customField) {
+                $email = $customField->getValue();
+                $user = $userDAO->findByEmail($customField->getValue());
+                if ($user) {
+                    $entity->setUser($user);
+                    break;
+                }
+            }
+        } else {
+            $entity->setUser(null);
+        }
+
+        $this->save($entity, false);
 
         $this->getEntityManager()->flush();
 

@@ -34,16 +34,16 @@ class Contact extends AbstractEntity
      * @var string
      */
     protected $lastName;
-    /**
-     * @Column(type="string", length=32, nullable=false)
-     * @var string
-     */
-    protected $email;
-    /**
-     * @Column(type="string", length=32, nullable=true)
-     * @var string
-     */
-    protected $phone;
+//    /**
+//     * @Column(type="string", length=32, nullable=false)
+//     * @var string
+//     */
+//    protected $email;
+//    /**
+//     * @Column(type="string", length=32, nullable=true)
+//     * @var string
+//     */
+//    protected $phone;
 
     /**
      * @Column(type="string", length=32, nullable=false)
@@ -111,41 +111,41 @@ class Contact extends AbstractEntity
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
+//    /**
+//     * @return string
+//     */
+//    public function getEmail()
+//    {
+//        return $this->email;
+//    }
 
-    /**
-     * @param string $email
-     * @return $this
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-        return $this;
-    }
+//    /**
+//     * @param string $email
+//     * @return $this
+//     */
+//    public function setEmail($email)
+//    {
+//        $this->email = $email;
+//        return $this;
+//    }
 
-    /**
-     * @return string
-     */
-    public function getPhone()
-    {
-        return $this->phone;
-    }
+//    /**
+//     * @return string
+//     */
+//    public function getPhone()
+//    {
+//        return $this->phone;
+//    }
 
-    /**
-     * @param string $phone
-     * @return $this
-     */
-    public function setPhone($phone)
-    {
-        $this->phone = $phone;
-        return $this;
-    }
+//    /**
+//     * @param string $phone
+//     * @return $this
+//     */
+//    public function setPhone($phone)
+//    {
+//        $this->phone = $phone;
+//        return $this;
+//    }
 
     /**
      * @return int
@@ -219,8 +219,29 @@ class Contact extends AbstractEntity
         return $this;
     }
 
-    public function getCustomFields() {
-        return $this->customFields->toArray();
+    public function getCustomFields($type = null) {
+        if (is_null($type)) {
+            return $this->customFields->toArray();
+        } else {
+            switch ($type) {
+                case ContactCustomField::TYPE_EMAIL:
+                case ContactCustomField::TYPE_PHONE:
+                case ContactCustomField::TYPE_ADDRESS:
+                    $fields = [];
+                    /**
+                     * @var ContactCustomField $customField
+                     */
+                    foreach ($this->customFields as $customField) {
+                        if ($customField->getType() == $type) {
+                            $fields[] = $customField;
+                        }
+                    }
+                    return $fields;
+                    break;
+                default:
+                    throw new \InvalidArgumentException('Field type not supported');
+            }
+        }
     }
 
     public function setCustomFields(array $customFields) {
@@ -228,5 +249,9 @@ class Contact extends AbstractEntity
         foreach ($customFields as $customField) {
             $this->customFields->add($customField);
         }
+    }
+
+    public function getEmailCustomFields() {
+        return $this->getCustomFields(ContactCustomField::TYPE_EMAIL);
     }
 }

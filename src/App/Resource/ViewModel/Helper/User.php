@@ -27,10 +27,10 @@ trait User {
         return [
             'id' => $contact->getId(),
             'type' => $contact->getType(),
-            'email' => $contact->getEmail(),
+//            'email' => $contact->getEmail(),
+//            'phone' => $contact->getPhone(),
             'firstName' => $contact->getFirstName(),
             'lastName' => $contact->getLastName(),
-            'phone' => $contact->getPhone(),
             'business' => $contact->getBusiness(),
             'customFields' => array_map(
                 function (ContactCustomField $field) {

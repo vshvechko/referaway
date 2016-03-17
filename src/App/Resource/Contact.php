@@ -86,17 +86,26 @@ class Contact extends AbstractResource
         try {
             $emailValidator = v::email()->length(null, 32);
             $phoneValidator = v::phone()->length(null, 32);
-            $this->addValidator('email', $emailValidator->setName('email'));
-            $this->addValidator('phone', $phoneValidator->setName('phone'));
+            $addressValidator = v::notEmpty()->length(null, 255);
+//            $this->addValidator('email', $emailValidator->setName('email'));
+//            $this->addValidator('phone', $phoneValidator->setName('phone'));
             $this->addValidator('firstName', v::notEmpty()->length(1, 32)->setName('firstName'));
             $this->addValidator('lastName', v::notEmpty()->length(1, 32)->setName('lastName'));
             $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
-            $this->addValidator('type', v::in([ContactEntity::TYPE_VENDOR, ContactEntity::TYPE_CUSTOMER])->setName('type'));
+            $this->addValidator(
+                'type',
+                v::in([ContactEntity::TYPE_VENDOR, ContactEntity::TYPE_CUSTOMER, ContactCustomField::TYPE_ADDRESS])
+                    ->setName('type')
+            );
             $this->validateArray($data);
 
             if (!empty($data['customFields']) && is_array($data['customFields'])) {
                 $this->clearValidators();
-                $this->addValidator('type', v::in([ContactCustomField::TYPE_EMAIL, ContactCustomField::TYPE_PHONE])->setName('custom field type'));
+                $this->addValidator(
+                    'type',
+                    v::in([ContactCustomField::TYPE_EMAIL, ContactCustomField::TYPE_PHONE, ContactCustomField::TYPE_ADDRESS])
+                        ->setName('custom field type')
+                );
                 $emailValidator->setName('custom email');
                 $phoneValidator->setName('custom phone');
                 foreach ($data['customFields'] as $fieldData) {
@@ -104,6 +113,9 @@ class Contact extends AbstractResource
                         switch ($fieldData['type']) {
                             case ContactCustomField::TYPE_EMAIL:
                                 $this->addValidator('value', $emailValidator);
+                                break;
+                            case ContactCustomField::TYPE_ADDRESS:
+                                $this->addValidator('value', $addressValidator);
                                 break;
                             case ContactCustomField::TYPE_PHONE:
                                 $this->addValidator('value', $phoneValidator);

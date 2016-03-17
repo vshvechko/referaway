@@ -10,6 +10,7 @@ class AbstractCustomField extends AbstractEntity
     const TYPE_EMAIL = 'email';
     const TYPE_PHONE = 'phone';
     const TYPE_IMAGE = 'image';
+    const TYPE_ADDRESS = 'address';
 
     /**
      * @Column(type="string", length=32, nullable=false)
