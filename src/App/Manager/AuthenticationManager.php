@@ -3,14 +3,17 @@
 namespace App\Manager;
 
 
+use App\Exception\StatusException;
+
 class AuthenticationManager extends AbstractManager {
 
     public function getAuthToken() {
         $requestHeaders = apache_request_headers();
-        $authorizationHeader = $requestHeaders['Authorization'];
 
         if (empty($requestHeaders['Authorization']))
-            throw new \OAuthException('Not Authorized', 401);
+            throw new StatusException('Unauthorized', 401);
+
+        $authorizationHeader = $requestHeaders['Authorization'];
 
         // validate the token
         $token = str_replace('Bearer ', '', $authorizationHeader);
