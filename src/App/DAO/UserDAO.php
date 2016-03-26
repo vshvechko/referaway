@@ -81,13 +81,16 @@ class UserDAO extends AbstractDAO {
 
     /**
      * @param $email
-     * @return null|UserEntity
+     * @param bool $hydrate
+     * @param bool $skipCache
+     * @return UserEntity|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findByEmail($email, $hydrate = false, $skipCache = false) {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('e')
             ->from($this->getRepositoryName(), 'e')
-            ->where($qb->expr()->eq('e.email', ':email'))->setParameter('email', $email);
+            ->where($qb->expr()->eq('LOWER(e.email)', ':email'))->setParameter('email', strtolower($email));
 
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }

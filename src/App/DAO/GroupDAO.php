@@ -64,7 +64,7 @@ class GroupDAO extends AbstractDAO {
      */
     public function findGroupsByUser(User $user, $search = null, $hydrate = false, $skipCache = false) {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('g')
+        $qb->select('g, ug, c, u')
             ->from($this->getRepositoryName(), 'g')
             ->leftJoin('g.members', 'ug')
             ->leftJoin('ug.contact', 'c')

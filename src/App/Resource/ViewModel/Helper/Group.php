@@ -68,6 +68,10 @@ trait Group {
         ];
         if ($user) {
             $result['memberStatus'] = $entity->getMemberStatus($user);
+            $member = $entity->findMemberByUser($user);
+            if ($member) {
+                $result['inviteId'] = $member->getId();
+            }
         }
         return $result;
     }

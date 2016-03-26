@@ -138,9 +138,20 @@ class Group extends AbstractEntity {
         /**
          * @var UserGroup $userGroup
          */
+        $userGroup = $this->findMemberByUser($user);
+        if ($userGroup) {
+            return $userGroup->getMemberStatus();
+        }
+        return null;
+    }
+
+    public function findMemberByUser(User $user) {
+        /**
+         * @var UserGroup $userGroup
+         */
         foreach ($this->members as $userGroup) {
             if ($userGroup->getContact() && $userGroup->getContact()->getUser() == $user) {
-                return $userGroup->getMemberStatus();
+                return $userGroup;
             }
         }
         return null;

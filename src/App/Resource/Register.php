@@ -3,6 +3,7 @@
 namespace App\Resource;
 
 
+use App\DAO\ContactDAO;
 use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use App\Resource;
@@ -13,12 +14,17 @@ class Register extends AbstractResource {
      * @var UserDAO
      */
     private $userService;
+    /**
+     * @var ContactDAO
+     */
+    private $contactService;
 
     /**
      * Get user service
      */
     public function init() {
         $this->setUserService(new UserDAO($this->getEntityManager()));
+        $this->setContactService(new ContactDAO($this->getEntityManager()));
     }
 
     /**
@@ -33,6 +39,20 @@ class Register extends AbstractResource {
      */
     public function setUserService($userService) {
         $this->userService = $userService;
+    }
+
+    /**
+     * @return ContactDAO
+     */
+    public function getContactService() {
+        return $this->contactService;
+    }
+
+    /**
+     * @param ContactDAO $contactService
+     */
+    public function setContactService($contactService) {
+        $this->contactService = $contactService;
     }
 
     public function post() {
@@ -68,6 +88,9 @@ class Register extends AbstractResource {
             $user->setToken($token);
 
             $this->getUserService()->save($user);
+
+            $this->getContactService()->assignContactsToUser($user);
+
             $smsManager->sendPassword($user->getPhone(), $pass);
             return [
                 'user' => $this->exportUserArray($user),

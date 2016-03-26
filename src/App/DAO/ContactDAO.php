@@ -3,8 +3,10 @@
 namespace App\DAO;
 
 use App\Entity\Contact as ContactEntity;
+use App\Entity\Contact;
 use App\Entity\ContactCustomField;
 use App\Entity\User as UserEntity;
+use App\Entity\User;
 use Doctrine\ORM\Query;
 
 class ContactDAO extends AbstractDAO {
@@ -110,6 +112,31 @@ class ContactDAO extends AbstractDAO {
 
         return $entity;
 
+    }
+
+    public function assignContactsToUser(User $user, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('c')
+            ->from($this->getRepositoryName(), 'c')
+            ->innerJoin('c.customFields', 'cf')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('cf.type', ':type'),
+                    $qb->expr()->eq('LOWER(cf.value)', ':email'),
+                    $qb->expr()->isNull('c.user')
+                )
+            )
+            ->setParameter('type', ContactCustomField::TYPE_EMAIL)
+            ->setParameter('email', strtolower($user->getEmail()));
+
+        $contacts = $qb->getQuery()->useResultCache(!$skipCache, null)->getResult();
+        /**
+         * @var Contact $contact
+         */
+        foreach ($contacts as $contact) {
+            $contact->setUser($user);
+        }
+        $this->flush();
     }
 
 }
