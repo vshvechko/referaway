@@ -87,7 +87,7 @@ class Group extends AbstractResource {
 
         try {
             $this->addValidator('name', v::notEmpty()->length(1, 255)->setName('Group Name'));
-            $this->addValidator('visibility', v::notEmpty()->in([
+            $this->addValidator('visibility', v::in([
                 GroupEntity::VISIBILITY_PUBLIC, GroupEntity::VISIBILITY_CLOSED, GroupEntity::VISIBILITY_PRIVATE
             ])->setName('visibility'));
             $this->validateArray($data);
