@@ -8,21 +8,32 @@ namespace App\Entity;
  * @Table(name="user_group")
  */
 class UserGroup extends AbstractEntity {
+    use WithAuthoincrementId;
 
     const ROLE_ADMIN = 1;
     const ROLE_MEMBER = 0;
 
+    const MEMBER_STATUS_PENDING = 0;
+    const MEMBER_STATUS_REJECTED = 1;
+    const MEMBER_STATUS_MEMBER = 2;
+
+//    /**
+//     * @var User
+//     * @ManyToOne(targetEntity="User")
+//     * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+//     */
+//    protected $user;
+
     /**
-     * @var User
-     * @Id
-     * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @var Contact
+     * @ManyToOne(targetEntity="Contact")
+     * @JoinColumn(name="contact_id", referencedColumnName="id", nullable=false)
      */
-    protected $user;
+    protected $contact;
+
     /**
      * @var Group
-     * @Id
-     * @ManyToOne(targetEntity="Group")
+     * @ManyToOne(targetEntity="Group", inversedBy="members")
      * @JoinColumn(name="group_id", referencedColumnName="id", nullable=false)
      */
     protected $group;
@@ -33,29 +44,35 @@ class UserGroup extends AbstractEntity {
      */
     protected $role;
 
-    public function __construct($user, $group, $role = self::ROLE_MEMBER) {
+    /**
+     * @var int
+     * @Column(name="member_status", type="integer", length=1, nullable=false)
+     */
+    protected $memberStatus;
+
+    public function __construct() {
         parent::__construct();
 
-        $this->setUser($user);
-        $this->setGroup($group);
-        $this->setRole($role);
+        $this->memberStatus = self::MEMBER_STATUS_PENDING;
+        $this->setRole(self::ROLE_MEMBER);
     }
 
     /**
-     * @return User
+     * @return Contact
      */
-    public function getUser()
+    public function getContact()
     {
-        return $this->user;
+        return $this->contact;
     }
 
     /**
-     * @param User $user
+     * @param Contact $contact
+     * @return $this
      */
-    public function setUser($user)
+    public function setContact($contact)
     {
-        $this->user = $user;
-        $user->addUserGroup($this);
+        $this->contact = $contact;
+        return $this;
     }
 
     /**
@@ -68,11 +85,13 @@ class UserGroup extends AbstractEntity {
 
     /**
      * @param Group $group
+     * @return $this
      */
     public function setGroup($group)
     {
         $this->group = $group;
         $group->addUserGroup($this);
+        return $this;
     }
 
     /**
@@ -85,11 +104,28 @@ class UserGroup extends AbstractEntity {
 
     /**
      * @param int $role
+     * @return $this
      */
     public function setRole($role)
     {
         $this->role = $role;
+        return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getMemberStatus() {
+        return $this->memberStatus;
+    }
+
+    /**
+     * @param int $memberStatus
+     * @return $this
+     */
+    public function setMemberStatus($memberStatus) {
+        $this->memberStatus = $memberStatus;
+        return $this;
+    }
 
 }

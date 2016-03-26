@@ -64,12 +64,16 @@ class Contact extends AbstractEntity
     protected $customFields;
 
     /**
+     * Associated user
+     *
      * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="user_id", referencedColumnName="id")
      */
     protected $user;
 
     /**
+     * Contact owner
+     *
      * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="owner_id", referencedColumnName="id")
      */

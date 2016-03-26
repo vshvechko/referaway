@@ -101,11 +101,11 @@ class User extends AbstractEntity {
      */
     protected $activationCode;
 
-    /**
-     * @var ArrayCollection
-     * @OneToMany(targetEntity="UserGroup", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
-     */
-    protected $groups;
+//    /**
+//     * @var ArrayCollection
+//     * @OneToMany(targetEntity="UserGroup", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
+//     */
+//    protected $groups;
 
     /**
      * @var ArrayCollection
@@ -295,26 +295,26 @@ class User extends AbstractEntity {
         $this->token = $token;
     }
 
-    public function getGroups() {
-        return array_map(
-            function (UserGroup $userGroup) {
-                return $userGroup->getGroup();
-            },
-            $this->groups->toArray()
-        );
-    }
+//    public function getGroups() {
+//        return array_map(
+//            function (UserGroup $userGroup) {
+//                return $userGroup->getGroup();
+//            },
+//            $this->groups->toArray()
+//        );
+//    }
 
-    public function addUserGroup(UserGroup $userGroup) {
-        if ($this->groups->contains($userGroup)) {
-            return;
-        }
-        $this->groups->add($userGroup);
-    }
+//    public function addUserGroup(UserGroup $userGroup) {
+//        if ($this->groups->contains($userGroup)) {
+//            return;
+//        }
+//        $this->groups->add($userGroup);
+//    }
 
-    public function removeUserGroup(UserGroup $group) {
-        $this->groups->removeElement($group);
-    }
-
+//    public function removeUserGroup(UserGroup $group) {
+//        $this->groups->removeElement($group);
+//    }
+//
     public function getContacts() {
         return $this->contacts->toArray();
     }

@@ -12,9 +12,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Group extends AbstractEntity {
     use WithAuthoincrementId;
 
+    const VISIBILITY_PUBLIC = 0;
+    const VISIBILITY_PRIVATE = 1;
+    const VISIBILITY_CLOSED = 2;
+
     public function __construct() {
         parent::__construct();
         $this->members = new ArrayCollection();
+        $this->setVisibility(self::VISIBILITY_PUBLIC);
     }
 
     /**
@@ -35,6 +40,12 @@ class Group extends AbstractEntity {
      * @OneToMany(targetEntity="UserGroup", mappedBy="group", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $members;
+
+    /**
+     * @Column(type="integer", length=2)
+     * @var string
+     */
+    protected $visibility;
 
     /**
      * @return string
@@ -72,7 +83,7 @@ class Group extends AbstractEntity {
          * @var UserGroup $member
          */
         foreach ($this->getUserGroups() as $member) {
-            if ($member->getUser() == $user) {
+            if ($member->getContact()->getUser() == $user) {
                 return $member->getRole() == UserGroup::ROLE_ADMIN;
             }
         }
@@ -82,7 +93,7 @@ class Group extends AbstractEntity {
     public function getMembers() {
         return array_map(
             function (UserGroup $userGroup) {
-                return $userGroup->getUser();
+                return $userGroup->getContact();
             },
             $this->members->toArray()
         );
@@ -103,4 +114,36 @@ class Group extends AbstractEntity {
     public function getUserGroups() {
         return $this->members->toArray();
     }
+
+    /**
+     * @return string
+     */
+    public function getVisibility() {
+        return $this->visibility;
+    }
+
+    /**
+     * @param string $visibility
+     * @return $this
+     */
+    public function setVisibility($visibility) {
+        $this->visibility = $visibility;
+        return $this;
+    }
+
+    public function getMemberStatus(User $user) {
+        if ($this->getOwner() == $user) {
+            return UserGroup::MEMBER_STATUS_MEMBER;
+        }
+        /**
+         * @var UserGroup $userGroup
+         */
+        foreach ($this->members as $userGroup) {
+            if ($userGroup->getContact() && $userGroup->getContact()->getUser() == $user) {
+                return $userGroup->getMemberStatus();
+            }
+        }
+        return null;
+    }
+
 }

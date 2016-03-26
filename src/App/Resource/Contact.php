@@ -94,7 +94,7 @@ class Contact extends AbstractResource
             $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
             $this->addValidator(
                 'type',
-                v::in([ContactEntity::TYPE_VENDOR, ContactEntity::TYPE_CUSTOMER, ContactCustomField::TYPE_ADDRESS])
+                v::in([ContactEntity::TYPE_VENDOR, ContactEntity::TYPE_CUSTOMER])
                     ->setName('type')
             );
             $this->validateArray($data);
