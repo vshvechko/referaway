@@ -1,9 +1,17 @@
 <RestClientRequest>
   <option name="biscuits">
-    <list />
+    <list>
+      <Biscuit>
+        <option name="date" value="-1" />
+        <option name="domain" value="localhost" />
+        <option name="name" value="PHPSESSID" />
+        <option name="path" value="/" />
+        <option name="value" value="lh8n7c7502agd4blhupsidcsb5" />
+      </Biscuit>
+    </list>
   </option>
   <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost" />
+  <option name="urlBase" value="http://localhost:81" />
   <option name="urlPath" value="/contact" />
   <option name="headers">
     <list>
@@ -13,7 +21,7 @@
       </KeyValuePair>
       <KeyValuePair>
         <option name="key" value="Authorization" />
-        <option name="value" value="Bearer gzoIHLnAmxmsJPXRQbFQAxSUjGVAWdjdXeNA1QqQ" />
+        <option name="value" value="Bearer test1" />
       </KeyValuePair>
     </list>
   </option>
@@ -24,6 +32,6 @@
   <option name="haveTextToSend" value="true" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{   &quot;email&quot;: &quot;test2@gmail.com&quot;,   &quot;phone&quot;: &quot;+375298991203&quot;,   &quot;firstName&quot;: &quot;test&quot;,   &quot;lastName&quot;:&quot;testlast&quot;, &quot;type&quot;: 1, &quot;business&quot;: &quot;test busines&quot;, &quot;customFields&quot;:[{&quot;type&quot;: &quot;email&quot;, &quot;value&quot;: &quot;testmail1&quot;},{&quot;type&quot;: &quot;email&quot;, &quot;value&quot;: &quot;testmail2&quot;},{&quot;type&quot;: &quot;phone&quot;, &quot;value&quot;: &quot;testphone&quot;}] }" />
-  <option name="filesToSend" value="" />
+  <option name="textToSend" value="{&quot;firstName&quot;: &quot;test&quot;,   &quot;lastName&quot;:&quot;testlast&quot;, &quot;type&quot;: 1, &quot;business&quot;: &quot;test busines&quot;, &quot;customFields&quot;:[{&quot;type&quot;: &quot;email&quot;, &quot;value&quot;: &quot;test2@test.com&quot;},{&quot;type&quot;: &quot;phone&quot;, &quot;value&quot;: &quot;+375291234567&quot;}] }" />
+  <option name="filesToSend" value="D:/Downloads/people.png" />
 </RestClientRequest>

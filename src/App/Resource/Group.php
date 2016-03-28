@@ -22,11 +22,13 @@ class Group extends AbstractResource {
     const REQUEST_ALL = 'all';
     const REQUEST_SEARCH = 's';
     const REQUEST_CONTACTS = 'contacts';
+    const REQUEST_USERGROUP_ID = 'inviteId';
 
     const ACTION_UPDATE = 'update';
     const ACTION_INVITE = 'invite';
+    const ACTION_ACCEPT_INVITE = 'accept_invite';
     const ACTION_REMOVE_CONTACT = 'remove_contact';
-    const ACTION_REJECT = 'reject';
+    const ACTION_REJECT_INVITE = 'reject_invite';
 
     /**
      * @var GroupDAO
@@ -142,9 +144,25 @@ class Group extends AbstractResource {
                 return $this->doActionInvite($user, $group, $data);
             case self::ACTION_REMOVE_CONTACT:
                 return $this->doActionRemoveContact($user, $group, $data);
+            case self::ACTION_ACCEPT_INVITE:
+                return $this->doActionAcceptInvite($user, $group, $data);
+            case self::ACTION_REJECT_INVITE:
+                return $this->doActionRejectInvite($user, $group, $data);
             default:
                 throw new StatusException('Action not supported', self::STATUS_BAD_REQUEST);
         }
+    }
+
+    public function delete($id) {
+        $user = $this->authenticateUser();
+        $group = $this->getService()->findById($id);
+        if (is_null($group)) {
+            throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
+        }
+        if (!$group->canAdmin($user)) {
+            throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
+        }
+        $this->getService()->remove($group);
     }
 
     /**
@@ -207,12 +225,91 @@ class Group extends AbstractResource {
                 }
             }
 
-            return ['group' => $this->exportGroupArray($group)];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
+
+        return null;
+    }
+
+    /**
+     * @param User $user
+     * @param GroupEntity $group
+     * @param $data
+     * @return array
+     * @throws StatusException
+     */
+    private function doActionAcceptInvite($user, $group, $data) {
+        try {
+            $inData = $data[self::REQUEST_DATA];
+            $this->addValidator(self::REQUEST_USERGROUP_ID, v::notEmpty());
+            $this->validateArray($inData);
+
+            $userGroupId = $inData[self::REQUEST_USERGROUP_ID];
+            $userGroup = $this->getService()->findUserGroupById($userGroupId);
+            if (is_null($userGroup)) {
+                throw new StatusException('Not found', self::STATUS_NOT_FOUND);
+            }
+            if ($userGroup->getContact()->getUser() != $user || $userGroup->getGroup() != $group) {
+                throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
+            }
+            if ($userGroup->getMemberStatus() != UserGroup::MEMBER_STATUS_MEMBER) {
+                $userGroup->setMemberStatus(UserGroup::MEMBER_STATUS_MEMBER);
+                $this->getService()->save($userGroup, false);
+                $assignedUserGroups = $this->getService()->getUserGroupsByUserAndGroup($user, $group);
+                /**
+                 * @var UserGroup $value
+                 */
+                foreach ($assignedUserGroups as $value) {
+                    if ($value->getId() != $userGroup->getId()) {
+                        $value->getGroup()->removeUserGroup($value);
+                        $this->getService()->remove($value, false);
+                    }
+                }
+                $this->getService()->flush();
+            }
+
+        } catch (ValidationException $e) {
+            throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
+        } catch (\InvalidArgumentException $e) {
+            throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param User $user
+     * @param GroupEntity $group
+     * @param $data
+     * @return array
+     * @throws StatusException
+     */
+    private function doActionRejectInvite($user, $group, $data) {
+        try {
+            $inData = $data[self::REQUEST_DATA];
+            $this->addValidator(self::REQUEST_USERGROUP_ID, v::notEmpty());
+            $this->validateArray($inData);
+
+            $userGroupId = $inData[self::REQUEST_USERGROUP_ID];
+            $userGroup = $this->getService()->findUserGroupById($userGroupId);
+            if (is_null($userGroup)) {
+                throw new StatusException('Not found', self::STATUS_NOT_FOUND);
+            }
+            if ($userGroup->getContact()->getUser() != $user || $userGroup->getGroup() != $group) {
+                throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
+            }
+            $this->getService()->remove($userGroup);
+
+        } catch (ValidationException $e) {
+            throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
+        } catch (\InvalidArgumentException $e) {
+            throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
+        }
+
+        return null;
     }
 
     /**
@@ -240,10 +337,11 @@ class Group extends AbstractResource {
                 }
             }
 
-            return ['group' => $this->exportGroupArray($group)];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
+
+        return ['group' => $this->exportGroupArray($group)];
     }
 
     private function addContactToGroup(GroupEntity $group, ContactEntity $contact, $checkExists = true) {
@@ -255,17 +353,7 @@ class Group extends AbstractResource {
         $userGroup->setContact($contact)
             ->setGroup($group);
         $this->getService()->flush();
-    }
 
-    public function delete($id) {
-        $user = $this->authenticateUser();
-        $group = $this->getService()->findById($id);
-        if (is_null($group)) {
-            throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
-        }
-        if (!$group->canAdmin($user)) {
-            throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
-        }
-        $this->getService()->remove($group);
+        return null;
     }
 }

@@ -145,4 +145,35 @@ class GroupDAO extends AbstractDAO {
             $this->remove($userGroup);
         }
     }
+
+    /**
+     * @param $id
+     * @param bool $hydrate
+     * @param bool $skipCache
+     * @return UserGroup|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findUserGroupById($id, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e')
+            ->from($this->getUserGroupRepositoryName(), 'e')
+            ->where($qb->expr()->eq('e.id', ':id'))->setParameter('id', $id);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
+    
+    public function getUserGroupsByUserAndGroup(User $user, Group $group, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('ug')
+            ->from($this->getUserGroupRepositoryName(), 'ug')
+            ->innerJoin('ug.contact', 'c')
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('c.user', ':user'),
+                    $qb->expr()->eq('ug.group', ':group')
+                )
+            )->setParameter('user', $user)
+            ->setParameter('group', $group);
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
 }
