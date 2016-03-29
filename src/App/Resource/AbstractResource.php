@@ -64,6 +64,8 @@ abstract class AbstractResource {
 
     /**
      * Default get method
+     * @return mixed
+     * @throws StatusException
      */
     public function get($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
@@ -71,6 +73,8 @@ abstract class AbstractResource {
 
     /**
      * Default post method
+     * @return mixed
+     * @throws StatusException
      */
     public function post() {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
@@ -78,6 +82,8 @@ abstract class AbstractResource {
 
     /**
      * Default put method
+     * @return mixed
+     * @throws StatusException
      */
     public function put($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
@@ -85,6 +91,8 @@ abstract class AbstractResource {
 
     /**
      * Default delete method
+     * @return mixed
+     * @throws StatusException
      */
     public function delete($id) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
@@ -92,6 +100,8 @@ abstract class AbstractResource {
 
     /**
      * General options method
+     * @return mixed
+     * @throws StatusException
      */
     public function options() {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);

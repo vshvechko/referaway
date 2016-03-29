@@ -103,6 +103,12 @@ class User extends AbstractEntity {
      */
     protected $activationCode;
 
+    /**
+     * @Column(name="image", type="string", length=255, nullable=true)
+     * @var string
+     */
+    protected $image;
+
 //    /**
 //     * @var ArrayCollection
 //     * @OneToMany(targetEntity="UserGroup", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
@@ -332,4 +338,24 @@ class User extends AbstractEntity {
         $this->contacts->removeElement($contact);
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string $image
+     * @return $this
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+    
+    
 }

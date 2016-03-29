@@ -8,6 +8,7 @@ use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
 use App\Logger\Logger;
 use App\Manager\AuthenticationManager;
+use App\Manager\LocalImageManager;
 use App\Manager\SMSManager;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
@@ -81,6 +82,14 @@ class Configurator
 
         $container['smsService'] = function ($c) {
             return new SMSManager($c);
+        };
+        
+        $container['imageService'] = function ($c) {
+            $settings = $c->get('settings')['CDN'];
+            $imageManager = new LocalImageManager($c);
+            $imageManager->setUploadDir($settings['uploadDir'])
+                ->setUploadUrl($settings['uploadUrl']);
+            return $imageManager;
         };
 
         // error handler

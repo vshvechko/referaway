@@ -16,7 +16,7 @@ class Contact extends AbstractEntity
     const TYPE_VENDOR = 1;
     const TYPE_CUSTOMER = 2;
 
-    protected $notPopulatedFields = ['user', 'owner', 'customFields'];
+    protected $notPopulatedFields = ['user', 'owner', 'customFields', 'image'];
 
     public function __construct()
     {
@@ -56,6 +56,11 @@ class Contact extends AbstractEntity
      * @var string
      */
     protected $business;
+
+    /**
+     * @Column(type="string", length=255, nullable=true)
+     */
+    protected $image;
 
     /**
      * @var ArrayCollection
@@ -258,4 +263,24 @@ class Contact extends AbstractEntity
     public function getEmailCustomFields() {
         return $this->getCustomFields(ContactCustomField::TYPE_EMAIL);
     }
+
+    /**
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param mixed $image
+     * @return $this
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+    
+    
 }
