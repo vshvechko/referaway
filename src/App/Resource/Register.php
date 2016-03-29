@@ -75,7 +75,7 @@ class Register extends AbstractResource {
             $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
 
-            $user = $this->getUserService()->createUser($data);
+            $user = $this->getUserService()->createUser($data, false);
 
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
             $authManager = $this->getServiceLocator()->get('authService');

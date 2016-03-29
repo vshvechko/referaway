@@ -109,7 +109,7 @@ class Group extends AbstractResource {
                 }
             }
 
-            return ['group' => $this->exportGroupArray($entity)];
+            return ['group' => $this->exportGroupArray($entity, $user)];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
@@ -191,7 +191,7 @@ class Group extends AbstractResource {
 
             $service->save($group);
 
-            return ['group' => $this->exportGroupArray($group)];
+            return ['group' => $this->exportGroupArray($group, $user)];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {

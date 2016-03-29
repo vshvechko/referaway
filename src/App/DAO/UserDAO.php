@@ -13,13 +13,14 @@ class UserDAO extends AbstractDAO {
 
     /**
      * @param $data
+     * @param bool $flush
      * @return UserEntity
      */
-    public function createUser($data) {
+    public function createUser($data, $flush = true) {
         $user = new UserEntity();
         $user->populate($data);
 
-        $this->save($user);
+        $this->save($user, $flush);
 
         return $user;
     }

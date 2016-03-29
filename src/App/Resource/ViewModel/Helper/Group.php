@@ -6,6 +6,7 @@ use App\Entity\Contact;
 use App\Entity\ContactCustomField;
 use App\Entity\Group as GroupEntity;
 use App\Entity\User;
+use App\Entity\UserGroup;
 
 trait Group {
     public function exportGroupArray(GroupEntity $entity, User $user = null) {
@@ -20,8 +21,10 @@ trait Group {
         $members = [];
         /**
          * @var Contact $member
+         * @var UserGroup $userGroup
          */
-        foreach ($entity->getMembers() as $member) {
+        foreach ($entity->getUserGroups() as $userGroup) {
+            $member = $userGroup->getContact();
             $customFields = [];
             /**
              * @var ContactCustomField $field
@@ -39,6 +42,8 @@ trait Group {
                 'type' => $member->getType(),
                 'business' => $member->getBusiness(),
                 'customFields' => $customFields,
+                'isAdmin' => $userGroup->isAdmin(),
+                'memberStatus' => $userGroup->getMemberStatus()
             ];
         }
 

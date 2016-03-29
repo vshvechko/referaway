@@ -128,4 +128,7 @@ class UserGroup extends AbstractEntity {
         return $this;
     }
 
+    public function isAdmin() {
+        return $this->getRole() == self::ROLE_ADMIN;
+    }
 }

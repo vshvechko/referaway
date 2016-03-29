@@ -16,6 +16,8 @@ class User extends AbstractEntity {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
+    protected $notPopulatedFields = ['token', 'isactive', 'activationcode'];
+
     public function __construct() {
         parent::__construct();
         $this->groups = new ArrayCollection();
