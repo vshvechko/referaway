@@ -48,6 +48,12 @@ class Group extends AbstractEntity {
     protected $visibility;
 
     /**
+     * @Column(type="string", length=255)
+     * @var string
+     */
+    protected $image;
+    
+    /**
      * @return string
      */
     public function getName() {
@@ -157,4 +163,23 @@ class Group extends AbstractEntity {
         return null;
     }
 
+    /**
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string $image
+     * @return $this
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+        return $this;
+    }
+
+    
 }

@@ -24,7 +24,10 @@ class LocalImageManager extends AbstractManager implements ResourceManagerInterf
 
     public function getUrl($filename)
     {
-        return $this->uploadUrl . '/' . $filename;
+        if ($filename) {
+            return $this->uploadUrl . '/' . $filename;
+        }
+        return null;
     }
     
     private function generateImageName() {

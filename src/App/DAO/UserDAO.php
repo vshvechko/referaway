@@ -28,7 +28,7 @@ class UserDAO extends AbstractDAO {
     /**
      * @param $id
      * @param array $data
-     * @return array|null
+     * @return \App\Entity\User|null
      */
     public function updateUser($id, array $data) {
         /**

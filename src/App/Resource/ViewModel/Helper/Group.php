@@ -7,9 +7,10 @@ use App\Entity\ContactCustomField;
 use App\Entity\Group as GroupEntity;
 use App\Entity\User;
 use App\Entity\UserGroup;
+use App\Manager\ResourceManagerInterface;
 
 trait Group {
-    public function exportGroupArray(GroupEntity $entity, User $user = null) {
+    public function exportGroupArray(GroupEntity $entity, ResourceManagerInterface $imageService, User $user = null) {
         $owner = [
             'id' => $entity->getOwner()->getId(),
             'email' => $entity->getOwner()->getEmail(),
@@ -17,6 +18,7 @@ trait Group {
             'lastName' => $entity->getOwner()->getLastName(),
             'business' => $entity->getOwner()->getBusiness(),
             'phone' => $entity->getOwner()->getPhone(),
+            'image' => $imageService->getUrl($entity->getOwner()->getImage()),
         ];
         $members = [];
         /**
@@ -43,7 +45,8 @@ trait Group {
                 'business' => $member->getBusiness(),
                 'customFields' => $customFields,
                 'isAdmin' => $userGroup->isAdmin(),
-                'memberStatus' => $userGroup->getMemberStatus()
+                'memberStatus' => $userGroup->getMemberStatus(),
+                'image' => $imageService->getUrl($member->getImage()),
             ];
         }
 
@@ -53,6 +56,7 @@ trait Group {
             'visibility' => $entity->getVisibility(),
             'owner' => $owner,
             'contacts' => $members,
+            'image' => $imageService->getUrl($entity->getImage()),
         ];
         if ($user) {
             $result['isAdmin'] = $entity->canAdmin($user);
@@ -61,7 +65,7 @@ trait Group {
         return $result;
     }
 
-    public function exportGroupShortArray(GroupEntity $entity, User $user = null) {
+    public function exportGroupShortArray(GroupEntity $entity, ResourceManagerInterface $imageService, User $user = null) {
         $owner = [
             'id' => $entity->getOwner()->getId(),
         ];
@@ -70,6 +74,7 @@ trait Group {
             'name' => $entity->getName(),
             'visibility' => $entity->getVisibility(),
             'owner' => $owner,
+            'image' => $imageService->getUrl($entity->getImage()),
         ];
         if ($user) {
             $result['memberStatus'] = $entity->getMemberStatus($user);

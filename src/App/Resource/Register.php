@@ -93,7 +93,7 @@ class Register extends AbstractResource {
 
             $smsManager->sendPassword($user->getPhone(), $pass);
             return [
-                'user' => $this->exportUserArray($user),
+                'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
                     'token' => $user->getToken(),
                     'type' => 'Bearer',

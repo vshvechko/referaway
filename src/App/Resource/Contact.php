@@ -61,7 +61,7 @@ class Contact extends AbstractResource
              */
             $data = [];
             foreach ($entities as $entity) {
-                $data[] = $this->exportContactArray($entity);
+                $data[] = $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'));
             }
             $data = ['contacts' => $data];
         } else {
@@ -69,7 +69,7 @@ class Contact extends AbstractResource
             if ($entity === null) {
                 throw new StatusException('Contact not found', self::STATUS_NOT_FOUND);
             }
-            $data = ['contact' => $this->exportContactArray($entity)];
+            $data = ['contact' => $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
         }
 
         return $data;
@@ -128,7 +128,7 @@ class Contact extends AbstractResource
 
             $entity = $this->getService()->createContact($data, $user);
 
-            return ['contact' => $this->exportContactArray($entity)];
+            return ['contact' => $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
@@ -141,6 +141,9 @@ class Contact extends AbstractResource
         $logger->debug(__METHOD__);
 
         $user = $this->authenticateUser();
+        /**
+         * @var ContactEntity $contact
+         */
         $contact = $this->service->findById($id);
         if (!$contact) {
             throw new StatusException('Contact not found', self::STATUS_NOT_FOUND);
@@ -148,7 +151,14 @@ class Contact extends AbstractResource
         if ($contact->getOwner()->getId() != $user->getId()) {
             throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
         }
-        $this->getService()->remove($contact);
+        
+        $oldImage = $contact->getImage();
+        
+        $this->getService()->removeContact($contact);
+        
+        if ($oldImage) {
+            $this->getServiceLocator()->get('imageService')->delete($oldImage);
+        }
     }
 
 }

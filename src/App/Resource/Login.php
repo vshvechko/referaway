@@ -66,7 +66,7 @@ class Login extends AbstractResource {
             $this->getUserService()->save($user);
 
             return [
-                'user' => $this->exportUserArray($user),
+                'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
                     'token' => $user->getToken(),
                     'type' => 'Bearer',

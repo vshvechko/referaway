@@ -69,7 +69,7 @@ class Group extends AbstractResource {
              */
             $data = [];
             foreach ($entities as $entity) {
-                $data[] = $this->exportGroupShortArray($entity, $user);
+                $data[] = $this->exportGroupShortArray($entity, $this->getServiceLocator()->get('imageService'), $user);
             }
             $data = ['groups' => $data];
         } else {
@@ -77,7 +77,7 @@ class Group extends AbstractResource {
             if ($entity === null) {
                 throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
             }
-            $data = ['group' => $this->exportGroupArray($entity, $user)];
+            $data = ['group' => $this->exportGroupArray($entity, $this->getServiceLocator()->get('imageService'), $user)];
         }
 
         return $data;
@@ -109,7 +109,7 @@ class Group extends AbstractResource {
                 }
             }
 
-            return ['group' => $this->exportGroupArray($entity, $user)];
+            return ['group' => $this->exportGroupArray($entity, $this->getServiceLocator()->get('imageService'), $user)];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
@@ -155,6 +155,9 @@ class Group extends AbstractResource {
 
     public function delete($id) {
         $user = $this->authenticateUser();
+        /**
+         * @var GroupEntity $group
+         */
         $group = $this->getService()->findById($id);
         if (is_null($group)) {
             throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
@@ -162,7 +165,12 @@ class Group extends AbstractResource {
         if (!$group->canAdmin($user)) {
             throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
         }
+        $oldImage = $group->getImage();
         $this->getService()->remove($group);
+
+        if ($oldImage) {
+            $this->getServiceLocator()->get('imageService')->delete($oldImage);
+        }
     }
 
     /**
@@ -191,7 +199,7 @@ class Group extends AbstractResource {
 
             $service->save($group);
 
-            return ['group' => $this->exportGroupArray($group, $user)];
+            return ['group' => $this->exportGroupArray($group, $this->getServiceLocator()->get('imageService'), $user)];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
@@ -341,7 +349,7 @@ class Group extends AbstractResource {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
 
-        return ['group' => $this->exportGroupArray($group)];
+        return ['group' => $this->exportGroupArray($group, $this->getServiceLocator()->get('imageService'))];
     }
 
     private function addContactToGroup(GroupEntity $group, ContactEntity $contact, $checkExists = true) {

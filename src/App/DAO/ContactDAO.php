@@ -15,6 +15,10 @@ class ContactDAO extends AbstractDAO {
         return 'App\Entity\Contact';
     }
 
+    protected function getUserGroupRepositoryName() {
+        return 'App\Entity\UserGroup';
+    }
+
     /**
      * @param $data
      * @return UserEntity
@@ -137,6 +141,22 @@ class ContactDAO extends AbstractDAO {
             $contact->setUser($user);
         }
         $this->flush();
+    }
+    
+    public function removeContact($entity, $flush = true)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('ug')
+            ->from($this->getUserGroupRepositoryName(), 'ug')
+            ->where(
+                    $qb->expr()->eq('ug.contact', ':contact')
+            )
+            ->setParameter('contact', $entity);
+        foreach ($qb->getQuery()->getResult() as $userGroup) {
+            $this->remove($userGroup, false);
+        }
+
+        return $this->remove($entity, $flush);
     }
 
 }
