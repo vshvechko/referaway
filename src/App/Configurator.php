@@ -124,7 +124,8 @@ class Configurator
     public function initRoutes(App $app)
     {
         // Get
-        $app->get('/{resource}[/{id}]', function (ServerRequestInterface $request, Response $response, $resource, $id = null) {
+        $app->get('/{resource}[/{id}[/{sub}[/{subId}]]]', function (ServerRequestInterface $request, Response $response,
+                                                                    $resource, $id = null, $sub = null, $subId = null) {
             /**
              * @var ResponseDataFormatter $formatter
              */
@@ -132,14 +133,15 @@ class Configurator
             try {
                 $resource = Resource::load($resource, $request, $response, $this);
 
-                return $response->withJson($formatter->getSuccess($resource->get($id)));
+                return $response->withJson($formatter->getSuccess($resource->get($id, $subId)));
             } catch (StatusException $e) {
                 return $response->withJson($formatter->getFailure($e->getMessage()), $e->getCode());
             }
         });
 
         // Post
-        $app->post('/{resource}', function (ServerRequestInterface $request, Response $response, $resource) {
+        $app->post('/{resource}[/{id}/{sub}]', function (ServerRequestInterface $request, Response $response,
+                                                              $resource, $id = null, $sub = null) {
             /**
              * @var ResponseDataFormatter $formatter
              */
@@ -147,14 +149,15 @@ class Configurator
             try {
                 $resource = Resource::load($resource, $request, $response, $this);
 
-                return $response->withJson($formatter->getSuccess($resource->post()));
+                return $response->withJson($formatter->getSuccess($resource->post($id)));
             } catch (StatusException $e) {
                 return $response->withJson($formatter->getFailure($e->getMessage()), $e->getCode());
             }
         });
 
         // Put
-        $app->put('/{resource}/{id}', function (ServerRequestInterface $request, Response $response, $resource, $id = null) {
+        $app->put('/{resource}/{id}[/{sub}[/{subId}]]', function (ServerRequestInterface $request, Response $response,
+                                                                  $resource, $id = null, $sub = null, $subId = null) {
             /**
              * @var ResponseDataFormatter $formatter
              */
@@ -162,39 +165,27 @@ class Configurator
             try {
                 $resource = Resource::load($resource, $request, $response, $this);
 
-                return $response->withJson($formatter->getSuccess($resource->put($id)));
+                return $response->withJson($formatter->getSuccess($resource->put($id, $subId)));
             } catch (StatusException $e) {
                 return $response->withJson($formatter->getFailure($e->getMessage()), $e->getCode());
             }
         });
 
         // Delete
-        $app->delete('/{resource}/{id}', function (ServerRequestInterface $request, Response $response, $resource, $id = null) {
+        $app->delete('/{resource}/{id}[/{sub}[/{subId}]]', function (ServerRequestInterface $request, Response $response,
+                                                                     $resource, $id = null, $sub = null, $subId = null) {
             /**
              * @var ResponseDataFormatter $formatter
              */
             $formatter = $this->get('dataFormatter');
             try {
                 $resource = Resource::load($resource, $request, $response, $this);
-                $resource->delete($id);
+                $resource->delete($id, $subId);
                 return $response->withJson($formatter->getSuccess());
             } catch (StatusException $e) {
                 return $response->withJson($formatter->getFailure($e->getMessage()), $e->getCode());
             }
         });
 
-        // Options
-        $app->options('/{resource}', function (ServerRequestInterface $request, Response $response, $resource) {
-            /**
-             * @var ResponseDataFormatter $formatter
-             */
-            $formatter = $this->get('dataFormatter');
-            try {
-                $resource = Resource::load($resource, $request, $response, $this);
-                return $response->withJson($formatter->getSuccess($resource->options()));
-            } catch (StatusException $e) {
-                return $response->withJson($formatter->getFailure($e->getMessage()), $e->getCode());
-            }
-        });
     }
 }

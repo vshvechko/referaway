@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Resource\Media;
+namespace App\Resource\Sub;
 
 
 use App\DAO\ContactDAO;
 use App\Exception\StatusException;
+use App\Resource\AbstractMediaResource;
 use Respect\Validation\Validator as v;
 use App\Entity\Contact as ContactEntity;
 
-class Contact extends AbstractMediaResource
+class ContactImage extends AbstractMediaResource
 {
-    public function put($id) {
+    public function post($id) {
         $user = $this->authenticateUser();
 
         $dao = new ContactDAO($this->getEntityManager());
@@ -34,7 +35,7 @@ class Contact extends AbstractMediaResource
         return ['url' => $this->getService()->getUrl($fileName)];
     }
 
-    public function delete($id)
+    public function delete($id, $subId = null)
     {
         $user = $this->authenticateUser();
 

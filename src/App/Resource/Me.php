@@ -43,13 +43,13 @@ class Me extends AbstractResource {
         $this->userService = $userService;
     }
 
-    public function get($id) {
+    public function get($id, $subId = null) {
         $user = $this->authenticateUser();
 
         return ['user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'))];
     }
 
-    public function post() {
+    public function post($id = null) {
         $user = $this->authenticateUser(false);
         if (is_null($user))
             throw new StatusException('User not found', self::STATUS_NOT_FOUND);

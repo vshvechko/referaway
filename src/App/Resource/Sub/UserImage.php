@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Resource\Media;
+namespace App\Resource\Sub;
 
 
 use App\DAO\UserDAO;
+use App\Exception\StatusException;
+use App\Resource\AbstractMediaResource;
 
 class User extends AbstractMediaResource
 {
-    public function put($id) {
+    public function post($id) {
         $user = $this->authenticateUser();
 
         $oldImage = $user->getImage();
@@ -22,9 +24,12 @@ class User extends AbstractMediaResource
         return ['url' => $this->getService()->getUrl($fileName)];
     }
     
-    public function delete($id)
+    public function delete($id, $subId = null)
     {
         $user = $this->authenticateUser();
+        if ($user->getId() != $id) {
+            throw new StatusException('Not Authorized', self::STATUS_UNAUTHORIZED);
+        }
 
         $oldImage = $user->getImage();
 

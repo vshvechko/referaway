@@ -55,7 +55,7 @@ class Register extends AbstractResource {
         $this->contactService = $contactService;
     }
 
-    public function post() {
+    public function post($id = null) {
         $data = $this->getRequest()->getParsedBody();
 
         try {

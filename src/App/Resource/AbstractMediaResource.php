@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Resource\Media;
+namespace App\Resource;
 
 
 use App\Manager\ResourceManagerInterface;
-use App\Resource\AbstractResource;
 
 abstract class AbstractMediaResource extends AbstractResource
 {

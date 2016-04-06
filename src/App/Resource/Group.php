@@ -57,7 +57,7 @@ class Group extends AbstractResource {
         $this->setService(new GroupDAO($this->getEntityManager()));
     }
 
-    public function get($id) {
+    public function get($id, $subId = null) {
         $user = $this->authenticateUser();
         if ($id === null) {
             $params = $this->getRequest()->getQueryParams();
@@ -83,7 +83,7 @@ class Group extends AbstractResource {
         return $data;
     }
 
-    public function post() {
+    public function post($id = null) {
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
 
@@ -117,7 +117,7 @@ class Group extends AbstractResource {
         }
     }
 
-    public function put($id) {
+    public function put($id, $subId = null) {
         $user = $this->authenticateUser();
 
         $group = $this->getService()->findById($id);
@@ -153,7 +153,7 @@ class Group extends AbstractResource {
         }
     }
 
-    public function delete($id) {
+    public function delete($id, $subId = null) {
         $user = $this->authenticateUser();
         /**
          * @var GroupEntity $group

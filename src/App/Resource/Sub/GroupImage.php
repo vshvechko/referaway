@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Resource\Media;
+namespace App\Resource\Sub;
 
 
 use App\DAO\GroupDAO;
 use App\Exception\StatusException;
 use App\Entity\Group as GroupEntity;
+use App\Resource\AbstractMediaResource;
 
-class Group extends AbstractMediaResource
+class GroupImage extends AbstractMediaResource
 {
-    public function put($id) {
+    public function post($id, $subId = null) {
         $user = $this->authenticateUser();
 
         $dao = new GroupDAO($this->getEntityManager());
@@ -33,7 +34,7 @@ class Group extends AbstractMediaResource
         return ['url' => $this->getService()->getUrl($fileName)];
     }
 
-    public function delete($id)
+    public function delete($id, $subId = null)
     {
         $user = $this->authenticateUser();
 

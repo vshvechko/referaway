@@ -64,46 +64,44 @@ abstract class AbstractResource {
 
     /**
      * Default get method
+     * @param null $id
+     * @param null $subId
      * @return mixed
      * @throws StatusException
      */
-    public function get($id) {
+    public function get($id = null, $subId = null) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default post method
+     * @param null $id
      * @return mixed
      * @throws StatusException
      */
-    public function post() {
+    public function post($id = null) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default put method
+     * @param $id
+     * @param null $subId
      * @return mixed
      * @throws StatusException
      */
-    public function put($id) {
+    public function put($id, $subId = null) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
     /**
      * Default delete method
+     * @param $id
+     * @param null $subId
      * @return mixed
      * @throws StatusException
      */
-    public function delete($id) {
-        throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
-    }
-
-    /**
-     * General options method
-     * @return mixed
-     * @throws StatusException
-     */
-    public function options() {
+    public function delete($id, $subId = null) {
         throw new StatusException('Not allowed', self::STATUS_METHOD_NOT_ALLOWED);
     }
 
@@ -116,7 +114,14 @@ abstract class AbstractResource {
      * @throws StatusException
      */
     public static function load($resource, ServerRequestInterface $request, Response $response, ContainerInterface $di) {
-        $class = 'App\\Resource\\' . ucfirst($resource);
+        $subResource = $request->getAttribute('route')->getArgument('sub');
+        $nameSpace = 'App\\Resource\\';
+        $resource = ucfirst($resource);
+        if ($subResource) {
+            $nameSpace .= 'Sub\\';
+            $resource = $resource . ucfirst($subResource);
+        }
+        $class = $nameSpace . $resource;
         if (!class_exists($class)) {
             throw new StatusException('Resource not exists', self::STATUS_NOT_FOUND);
         }

@@ -36,7 +36,7 @@ class Login extends AbstractResource {
         $this->userService = $userService;
     }
 
-    public function post() {
+    public function post($id = null) {
         $data = $this->getRequest()->getParsedBody();
 
         try {
