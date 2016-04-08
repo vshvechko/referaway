@@ -18,12 +18,6 @@ class Contact extends AbstractEntity
 
     protected $notPopulatedFields = ['user', 'owner', 'customFields', 'image'];
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->customFields = new ArrayCollection();
-    }
-
     /**
      * @Column(name="first_name", type="string", length=32, nullable=true)
      * @var string
@@ -77,12 +71,18 @@ class Contact extends AbstractEntity
     protected $user;
 
     /**
-     * Contact owner
+     * User owner
      *
      * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="owner_id", referencedColumnName="id")
      */
     protected $owner;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->customFields = new ArrayCollection();
+    }
 
     /**
      * @return string
@@ -219,7 +219,7 @@ class Contact extends AbstractEntity
     }
 
     /**
-     * @param mixed $owner
+     * @param User $owner
      * @return $this
      */
     public function setOwner($owner)
