@@ -281,13 +281,14 @@ class Referral extends AbstractEntity
     public function setImages(array $images) {
         $this->images = new ArrayCollection();
         foreach ($images as $image) {
-            $this->images->add($image);
+            $this->addImage($image);
         }
         return $this;
     }
 
     public function addImage(ReferralImage $image) {
         $this->images->add($image);
+        $image->setReferral($this);
         return $this;
     }
 

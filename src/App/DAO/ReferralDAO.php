@@ -4,6 +4,7 @@ namespace App\DAO;
 
 use App\Entity\Referral;
 use App\Entity\ReferralCustomField;
+use App\Entity\ReferralImage;
 use App\Entity\User;
 use Doctrine\ORM\Query;
 
@@ -12,6 +13,11 @@ class ReferralDAO extends AbstractDAO
     protected function getRepositoryName()
     {
         return 'App\Entity\Referral';
+    }
+
+    protected function getImageRepositoryName()
+    {
+        return 'App\Entity\ReferralImage';
     }
 
     public function createReferral($data, $owner, $target, $customFields) {
@@ -105,5 +111,21 @@ class ReferralDAO extends AbstractDAO
         )->setParameter('user', $user);
 
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
+
+    /**
+     * @param $id
+     * @param bool $hydrate
+     * @param bool $skipCache
+     * @return ReferralImage
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findImageById($id, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e')
+            ->from($this->getImageRepositoryName(), 'e')
+            ->where($qb->expr()->eq('e.id', ':id'))->setParameter('id', $id);
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }
 }
