@@ -17,6 +17,11 @@ class Referral
             'note' => $entity->getNote(),
             'status' => $entity->getStatus(),
             'revenue' => $entity->getRevenue(),
+            'owner' => [
+                'id' => $entity->getOwner()->getId(),
+                'firstName' => $entity->getOwner()->getFirstName(),
+                'lastName' => $entity->getOwner()->getLastName(),
+            ],
             'customFields' => array_map(
                 function (ReferralCustomField $field) {
                     return $this->exportCustomField($field);

@@ -54,7 +54,7 @@ class ReferralDAO extends AbstractDAO
      */
     protected function getFindReferalsQB(User $user, $search = null) {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('r, u, c, i, cf')
+        $qb->select('r, u, c, i, cf, o')
             ->from($this->getRepositoryName(), 'r')
             ->leftJoin('r.owner', 'o')
             ->leftJoin('r.target', 'c')

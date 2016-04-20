@@ -61,7 +61,7 @@ class Referral extends AbstractEntity
      */
     protected $dateCompleted;
     /**
-     * User owner
+     * @var User
      *
      * @ManyToOne(targetEntity="User")
      * @JoinColumn(name="owner_id", referencedColumnName="id")
@@ -253,7 +253,7 @@ class Referral extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return User
      */
     public function getOwner()
     {
