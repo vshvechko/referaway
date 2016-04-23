@@ -4,7 +4,8 @@
         "slim/slim": "^3.0",
         "doctrine/orm": "*",
         "monolog/monolog": "^1.17",
-        "respect/validation": "^1.0"
+        "respect/validation": "^1.0",
+        "phpmailer/phpmailer": "^5.2"
     },
     "autoload": {
         "psr-4": {

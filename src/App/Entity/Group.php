@@ -48,7 +48,7 @@ class Group extends AbstractEntity {
     protected $visibility;
 
     /**
-     * @Column(type="string", length=255)
+     * @Column(type="string", length=255, nullable=true)
      * @var string
      */
     protected $image;

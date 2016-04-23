@@ -9,6 +9,7 @@ use App\Helper\ResponseDataFormatter;
 use App\Logger\Logger;
 use App\Manager\AuthenticationManager;
 use App\Manager\LocalImageManager;
+use App\Manager\MailManager;
 use App\Manager\SMSManager;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Configuration;
@@ -16,6 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
 use Monolog\Handler\StreamHandler;
 use Monolog\Processor\UidProcessor;
+use PHPMailer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
@@ -90,6 +92,52 @@ class Configurator
             $imageManager->setUploadDir($settings['uploadDir'])
                 ->setUploadUrl($settings['uploadUrl']);
             return $imageManager;
+        };
+
+        // mailer
+        $container['mailer'] = function ($c) {
+
+            $mail = new PHPMailer;
+            $settings = $c->get('settings')['email'];
+            if (array_key_exists('smtp', $settings)) {
+                $mail->isSMTP();
+                //Enable SMTP debugging
+                // 0 = off (for production use)
+                // 1 = client messages
+                // 2 = client and server messages
+                $mail->SMTPDebug = 0;
+                if ($c->get('settings')['applicationMode'] != 'production') {
+                    $mail->SMTPDebug = 2;
+                    //Ask for HTML-friendly debug output
+                    $mail->Debugoutput = 'html';
+                }
+                //Set the hostname of the mail server
+                $mail->Host = $settings['smtp']['host'];
+                // use
+//                 $mail->Host = gethostbyname($settings['smtp']['host']);
+                // if your network does not support SMTP over IPv6
+                //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+                $mail->Port = $settings['smtp']['port'];
+                //Set the encryption system to use - ssl (deprecated) or tls
+                $mail->SMTPSecure = $settings['smtp']['sequre'];
+                //Whether to use SMTP authentication
+                $mail->SMTPAuth = $settings['smtp']['auth'];
+                //Username to use for SMTP authentication - use full email address for gmail
+                $mail->Username = $settings['smtp']['username'];
+                //Password to use for SMTP authentication
+                $mail->Password = $settings['smtp']['password'];
+            }
+            //Set who the message is to be sent from
+            $mail->setFrom($settings['from'][0], $settings['from'][1]);
+            //Set an alternative reply-to address
+            $mail->addReplyTo($settings['replyTo'][0], $settings['replyTo'][1]);
+
+            return $mail;
+        };
+
+        // email manager
+        $container['mailManager'] = function($c) {
+            return new MailManager($c);
         };
 
         // error handler

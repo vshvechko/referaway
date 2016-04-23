@@ -20,6 +20,39 @@ return [
             'password' => '',
             'dbname' => 'referaway'
         ],
+
+        // email settings
+        'email' => [
+            // use smtp server
+            'smtp' => [
+                'host' => 'smtp.gmail.com',
+                'port' => '587',
+                'sequre' => 'tls',
+                'auth' => true,
+                'username' => 'gmail account',
+                'password' => 'gmail pass',
+            ],
+            'from' => [
+                'noreply@cogniteq.com',
+                'Info'
+            ],
+            'replyTo' => [
+                'noreply@cogniteq.com',
+                'Info'
+            ],
+
+            // messages settings
+            'messages' => [
+                // message id
+                'password' => [
+                    // email subject
+                    'subject' => 'Referaway password',
+                    // email template
+                    'template' => __DIR__ . '/../src/App/View/Email/password.phtml'
+                ]
+            ]
+        ],
+
         'CDN' => [
             'uploadDir' => __DIR__ . '/../public/uploads',
             'uploadUrl' => sprintf(

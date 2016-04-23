@@ -70,7 +70,7 @@ class Register extends AbstractResource {
             if (empty($data['lastName']))
                 throw new \InvalidArgumentException('"lastName" missed');
             if ($this->getUserService()->isEmailExist($data['email']))
-                throw new \InvalidArgumentException('email "' . $data['email'] . '"" exists already');
+                throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
 
             $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
@@ -80,6 +80,7 @@ class Register extends AbstractResource {
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
             $authManager = $this->getServiceLocator()->get('authService');
             $smsManager = $this->getServiceLocator()->get('smsService');
+            $emailManager = $this->getServiceLocator()->get('mailManager');
 
 //            $code = $encoder->generateShortCode();
 //            $user->setActivationCode($code);
@@ -91,7 +92,14 @@ class Register extends AbstractResource {
 
             $this->getContactService()->assignContactsToUser($user);
 
-            $smsManager->sendPassword($user->getPhone(), $pass);
+            try {
+                $emailManager->sendPasswordEmail($user->getEmail(), $pass);
+            } catch (\Exception $e) {
+                $logger = $this->getServiceLocator()->get('logger');
+                $logger->err(sprintf('%s in %s:%s', $e->getMessage(), $e->getFile(), $e->getLine()));
+                $logger->debug($e->getTraceAsString());
+            }
+//            $smsManager->sendPassword($user->getPhone(), $pass);
             return [
                 'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
@@ -101,7 +109,6 @@ class Register extends AbstractResource {
                 ],
                 // TODO remove code, send by sms instead
 //                'code' => $user->getActivationCode(),
-                'password' => $pass
             ];
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
