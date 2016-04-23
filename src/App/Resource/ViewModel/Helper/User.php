@@ -47,7 +47,8 @@ trait User {
     protected function exportCustomField(ContactCustomField $field) {
         return [
             'type' => $field->getType(),
-            'value' => $field->getValue()
+            'value' => $field->getValue(),
+            'meta' => $field->getMeta()
         ];
     }
 }

@@ -108,6 +108,7 @@ class Contact extends AbstractResource
                 );
                 $emailValidator->setName('custom email');
                 $phoneValidator->setName('custom phone');
+                $this->addValidator('meta', v::optional(v::length(null, 32))->setName('meta'));
                 foreach ($data['customFields'] as $fieldData) {
                     if (!empty($fieldData['type'])) {
                         switch ($fieldData['type']) {
@@ -172,6 +173,7 @@ class Contact extends AbstractResource
                     v::in([ContactCustomField::TYPE_EMAIL, ContactCustomField::TYPE_PHONE, ContactCustomField::TYPE_ADDRESS])
                         ->setName('custom field type')
                 );
+                $this->addValidator('meta', v::optional(v::length(null, 32))->setName('meta'));
                 $emailValidator->setName('custom email');
                 $phoneValidator->setName('custom phone');
                 foreach ($data['customFields'] as $fieldData) {

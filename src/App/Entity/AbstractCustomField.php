@@ -22,6 +22,11 @@ class AbstractCustomField extends AbstractEntity
      * @var string
      */
     protected $value;
+    /**
+     * @Column(type="string", length=255, nullable=true)
+     * @var string
+     */
+    protected $meta;
 
     /**
      * @return string
@@ -56,6 +61,22 @@ class AbstractCustomField extends AbstractEntity
     public function setValue($value)
     {
         $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMeta() {
+        return $this->meta;
+    }
+
+    /**
+     * @param string $meta
+     * @return $this
+     */
+    public function setMeta($meta) {
+        $this->meta = $meta;
         return $this;
     }
 
