@@ -118,6 +118,52 @@ class ContactDAO extends AbstractDAO {
 
     }
 
+    public function updateContact(ContactEntity $entity, $data, UserEntity $owner) {
+        $entity->populate($data);
+        // set contact owner
+        $entity->setOwner($owner);
+        $entity->setUser(null);
+
+        $this->save($entity);
+
+        // set custom fields
+        $customFields = [];
+        if (!empty($data['customFields'])) {
+            foreach ($data['customFields'] as $fieldData) {
+                $field = new ContactCustomField();
+                $field->populate($fieldData);
+                $field->setContact($entity);
+                $customFields[] = $field;
+            }
+            $entity->setCustomFields($customFields);
+        }
+
+        // set related user
+        $emailFields = $entity->getEmailCustomFields();
+        if (count($emailFields)) {
+            $userDAO = new UserDAO($this->getEntityManager());
+
+            /**
+             * @var ContactCustomField $customField
+             */
+            foreach ($customFields as $customField) {
+                $user = $userDAO->findByEmail($customField->getValue());
+                if ($user) {
+                    $entity->setUser($user);
+                    break;
+                }
+            }
+        } else {
+            $entity->setUser(null);
+        }
+
+        $this->save($entity, false);
+
+        $this->getEntityManager()->flush();
+
+        return $entity;
+    }
+
     public function assignContactsToUser(User $user, $skipCache = false) {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('c')
