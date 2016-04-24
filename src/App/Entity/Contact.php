@@ -254,7 +254,7 @@ class Contact extends AbstractEntity
     }
 
     public function setCustomFields(array $customFields) {
-        $this->customFields = new ArrayCollection();
+        $this->customFields->clear();
         foreach ($customFields as $customField) {
             $this->customFields->add($customField);
         }
