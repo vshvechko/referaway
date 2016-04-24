@@ -22,7 +22,6 @@ class User extends AbstractEntity {
         parent::__construct();
         $this->groups = new ArrayCollection();
         $this->contacts = new ArrayCollection();
-        $this->setIsActive(self::STATUS_ACTIVE);
     }
 
     /**
@@ -130,9 +129,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $email
+     * @return $this
      */
     public function setEmail($email) {
         $this->email = $email;
+        return $this;
     }
 
     /**
@@ -144,9 +145,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $password
+     * @return $this
      */
     public function setPassword($password) {
         $this->password = $password;
+        return $this;
     }
 
     /**
@@ -158,9 +161,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $firstName
+     * @return $this
      */
     public function setFirstName($firstName) {
         $this->firstName = $firstName;
+        return $this;
     }
 
     /**
@@ -172,9 +177,11 @@ class User extends AbstractEntity {
 
     /**
      * @param mixed $lastName
+     * @return $this
      */
     public function setLastName($lastName) {
         $this->lastName = $lastName;
+        return $this;
     }
 
     /**
@@ -186,9 +193,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $phone
+     * @return $this
      */
     public function setPhone($phone) {
         $this->phone = $phone;
+        return $this;
     }
 
     /**
@@ -200,9 +209,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $business
+     * @return $this
      */
     public function setBusiness($business) {
         $this->business = $business;
+        return $this;
     }
 
     /**
@@ -214,9 +225,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $address
+     * @return $this
      */
     public function setAddress($address) {
         $this->address = $address;
+        return $this;
     }
 
     /**
@@ -228,9 +241,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $city
+     * @return $this
      */
     public function setCity($city) {
         $this->city = $city;
+        return $this;
     }
 
     /**
@@ -242,9 +257,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $country
+     * @return $this
      */
     public function setCountry($country) {
         $this->country = $country;
+        return $this;
     }
 
     /**
@@ -256,16 +273,11 @@ class User extends AbstractEntity {
 
     /**
      * @param string $zip
+     * @return $this
      */
     public function setZip($zip) {
         $this->zip = $zip;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken() {
-        return $this->token;
+        return $this;
     }
 
     /**
@@ -277,9 +289,11 @@ class User extends AbstractEntity {
 
     /**
      * @param int $isActive
+     * @return $this
      */
     public function setIsActive($isActive) {
         $this->isActive = $isActive;
+        return $this;
     }
 
     /**
@@ -291,16 +305,27 @@ class User extends AbstractEntity {
 
     /**
      * @param mixed $activationCode
+     * @return $this
      */
     public function setActivationCode($activationCode) {
         $this->activationCode = $activationCode;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getToken() {
+        return $this->token;
     }
 
     /**
      * @param string $token
+     * @return $this
      */
     public function setToken($token) {
         $this->token = $token;
+        return $this;
     }
 
 //    public function getGroups() {

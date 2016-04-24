@@ -5,8 +5,11 @@ namespace App\Resource;
 
 use App\DAO\ContactDAO;
 use App\DAO\UserDAO;
+use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
 use App\Resource;
+use Respect\Validation\Exceptions\ValidationException;
+use Respect\Validation\Validator as v;
 
 class Register extends AbstractResource {
     use Resource\ViewModel\Helper\User;
@@ -59,31 +62,37 @@ class Register extends AbstractResource {
         $data = $this->getRequest()->getParsedBody();
 
         try {
-            if (empty($data['email']))
-                throw new \InvalidArgumentException('"email" missed');
-//            if (empty($data['password']))
-//                throw new \InvalidArgumentException('"password" missed');
-            if (empty($data['firstName']))
-                throw new \InvalidArgumentException('"firstName" missed');
-            if (empty($data['phone']))
-                throw new \InvalidArgumentException('"phone" missed');
-            if (empty($data['lastName']))
-                throw new \InvalidArgumentException('"lastName" missed');
+
+            $emailValidator = v::email()->length(null, 32);
+            $phoneValidator = v::phone()->length(null, 32);
+            $addressValidator = v::notEmpty()->length(null, 255);
+//            $this->addValidator('email', $emailValidator->setName('email'));
+//            $this->addValidator('phone', $phoneValidator->setName('phone'));
+            $this->addValidator('email', v::notEmpty()->length(1, 32)->setName('email'));
+            $this->addValidator('phone', v::notEmpty()->phone()->setName('phone'));
+            $this->addValidator('firstName', v::notEmpty()->length(1, 32)->setName('firstName'));
+            $this->addValidator('lastName', v::notEmpty()->length(1, 32)->setName('lastName'));
+            $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
+
+            $this->validateArray($data);
+
             if ($this->getUserService()->isEmailExist($data['email']))
                 throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
 
             $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
 
-            $user = $this->getUserService()->createUser($data, false);
-
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
             $authManager = $this->getServiceLocator()->get('authService');
             $smsManager = $this->getServiceLocator()->get('smsService');
             $emailManager = $this->getServiceLocator()->get('mailManager');
 
-//            $code = $encoder->generateShortCode();
-//            $user->setActivationCode($code);
+            $user = new UserEntity();
+            $user->populate($data);
+
+            $code = $encoder->generateShortCode();
+            $user->setActivationCode($code)
+                ->setIsActive(UserEntity::STATUS_INACTIVE);
 
             $token = $authManager->generateToken();
             $user->setToken($token);
@@ -108,8 +117,10 @@ class Register extends AbstractResource {
                     'expiresIn' => null
                 ],
                 // TODO remove code, send by sms instead
-//                'code' => $user->getActivationCode(),
+                'code' => $user->getActivationCode(),
             ];
+        } catch (ValidationException $e) {
+            throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }

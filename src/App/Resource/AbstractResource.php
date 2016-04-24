@@ -198,8 +198,8 @@ abstract class AbstractResource {
             if (is_null($user))
                 throw new \Exception('User not found');
 
-//            if ($activeOnly && $user->getIsActive() != User::STATUS_ACTIVE)
-//                throw new StatusException('User not activated', self::STATUS_UNAUTHORIZED);
+            if ($activeOnly && $user->getIsActive() != User::STATUS_ACTIVE)
+                throw new StatusException('User not activated', self::STATUS_UNAUTHORIZED);
 
             return $user;
         } catch (StatusException $e) {
