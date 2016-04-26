@@ -64,11 +64,6 @@ class Register extends AbstractResource {
 
         try {
 
-            $emailValidator = v::email()->length(null, 32);
-            $phoneValidator = v::phone()->length(null, 32);
-            $addressValidator = v::notEmpty()->length(null, 255);
-//            $this->addValidator('email', $emailValidator->setName('email'));
-//            $this->addValidator('phone', $phoneValidator->setName('phone'));
             $this->addValidator('email', v::notEmpty()->length(1, 32)->setName('email'));
             $this->addValidator('phone', v::notEmpty()->phone()->setName('phone'));
             $this->addValidator('firstName', v::notEmpty()->length(1, 32)->setName('firstName'));
