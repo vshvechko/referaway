@@ -102,7 +102,7 @@ class Register extends AbstractResource {
 //            $code = $encoder->generateShortCode();
 //            $user->setActivationCode($code)
 //                ->setIsActive(UserEntity::STATUS_INACTIVE);
-            $user->setIsActive(true);
+            $user->setIsActive(UserEntity::STATUS_ACTIVE);
 
             $token = $authManager->generateToken();
             $user->setToken($token);
