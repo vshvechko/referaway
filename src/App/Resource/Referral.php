@@ -131,7 +131,10 @@ class Referral extends AbstractResource
                 }
             }
 
-            if (!empty($data[self::REQUEST_CUSTOM_FIELDS]) && is_array($data[self::REQUEST_CUSTOM_FIELDS])) {
+            $customFields = (isset($data[self::REQUEST_CUSTOM_FIELDS]) && is_array($data[self::REQUEST_CUSTOM_FIELDS]))
+                ? $data[self::REQUEST_CUSTOM_FIELDS]
+                : null;
+            if (!empty($customFields)) {
                 $this->clearValidators();
                 $this->addValidator(
                     'type',
@@ -141,7 +144,7 @@ class Referral extends AbstractResource
                 $emailValidator->setName('custom email');
                 $phoneValidator->setName('custom phone');
                 $addressValidator->setName('custom address');
-                foreach ($data['customFields'] as $fieldData) {
+                foreach ($customFields as $fieldData) {
                     if (!empty($fieldData['type'])) {
                         switch ($fieldData['type']) {
                             case ReferralCustomField::TYPE_ADDRESS:
@@ -159,7 +162,7 @@ class Referral extends AbstractResource
                 }
             }
             
-            $entity = $this->getService()->createReferral($data, $user, $target, $data[self::REQUEST_CUSTOM_FIELDS]);
+            $entity = $this->getService()->createReferral($data, $user, $target, $customFields);
 
             return ['referral' => (new ReferralHelper())->exportArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {

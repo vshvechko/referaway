@@ -20,7 +20,7 @@ class ReferralDAO extends AbstractDAO
         return 'App\Entity\ReferralImage';
     }
 
-    public function createReferral($data, $owner, $target, $customFields) {
+    public function createReferral($data, $owner, $target, $customFields = null) {
         $entity = new Referral();
         $entity->populate($data);
         $entity->setOwner($owner)

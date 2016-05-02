@@ -14,6 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 class Referral extends AbstractEntity
 {
     use WithAuthoincrementId;
+    use WithCreateDate;
 
     const TYPE_CUSTOMER = 1;
     const TYPE_VENDOR = 2;
@@ -87,6 +88,7 @@ class Referral extends AbstractEntity
         $this->customFields = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->setStatus(self::STATUS_PENDING);
+        $this->setCreated(new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
     public function getCustomFields($type = null) {
