@@ -62,5 +62,11 @@ return [
                 ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) ? ':' . $_SERVER['SERVER_PORT'] : null
             ) . '/uploads'
         ],
+
+        // sinch application settings
+        'sms' => [
+            'appKey' => '2d426bef-5fd2-426e-87cc-feb370846239',
+            'appSecret' => 'NYH50VBdXUiWkLIXoGzY5w=='
+        ]
     ],
 ];

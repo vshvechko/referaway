@@ -7,6 +7,7 @@ use App\DAO\ContactDAO;
 use App\DAO\UserDAO;
 use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
+use App\Manager\SMSManager;
 use App\Resource;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Validator as v;
@@ -63,36 +64,40 @@ class Register extends AbstractResource {
 
         try {
 
-            $emailValidator = v::email()->length(null, 32);
-            $phoneValidator = v::phone()->length(null, 32);
-            $addressValidator = v::notEmpty()->length(null, 255);
-//            $this->addValidator('email', $emailValidator->setName('email'));
-//            $this->addValidator('phone', $phoneValidator->setName('phone'));
             $this->addValidator('email', v::notEmpty()->length(1, 32)->setName('email'));
             $this->addValidator('phone', v::notEmpty()->phone()->setName('phone'));
             $this->addValidator('firstName', v::notEmpty()->length(1, 32)->setName('firstName'));
             $this->addValidator('lastName', v::notEmpty()->length(1, 32)->setName('lastName'));
             $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
+            $this->addValidator('code', v::notEmpty()->setName('code'));
 
             $this->validateArray($data);
 
             if ($this->getUserService()->isEmailExist($data['email']))
                 throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
 
+            /**
+             * @var SMSManager $smsService
+             */
+            $smsService = $this->getServiceLocator()->get('smsService');
+            if (!$smsService->reportVerification($data['phone'], $data['code'])) {
+                throw new \InvalidArgumentException('Code is not valid');
+            }
+
             $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
             $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
 
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
             $authManager = $this->getServiceLocator()->get('authService');
-            $smsManager = $this->getServiceLocator()->get('smsService');
             $emailManager = $this->getServiceLocator()->get('mailManager');
 
             $user = new UserEntity();
             $user->populate($data);
 
-            $code = $encoder->generateShortCode();
-            $user->setActivationCode($code)
-                ->setIsActive(UserEntity::STATUS_INACTIVE);
+//            $code = $encoder->generateShortCode();
+//            $user->setActivationCode($code)
+//                ->setIsActive(UserEntity::STATUS_INACTIVE);
+            $user->setIsActive(UserEntity::STATUS_ACTIVE);
 
             $token = $authManager->generateToken();
             $user->setToken($token);
@@ -108,7 +113,6 @@ class Register extends AbstractResource {
                 $logger->err(sprintf('%s in %s:%s', $e->getMessage(), $e->getFile(), $e->getLine()));
                 $logger->debug($e->getTraceAsString());
             }
-//            $smsManager->sendPassword($user->getPhone(), $pass);
             return [
                 'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
@@ -117,7 +121,7 @@ class Register extends AbstractResource {
                     'expiresIn' => null
                 ],
                 // TODO remove code, send by sms instead
-                'code' => $user->getActivationCode(),
+//                'code' => $user->getActivationCode(),
             ];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
