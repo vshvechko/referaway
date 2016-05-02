@@ -3,6 +3,7 @@
 namespace App;
 
 
+use App\DoctrineExtensions\DBAL\Types\UTCDateTimeType;
 use App\Exception\StatusException;
 use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
@@ -12,6 +13,7 @@ use App\Manager\LocalImageManager;
 use App\Manager\MailManager;
 use App\Manager\SMSManager;
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Interop\Container\ContainerInterface;
@@ -62,6 +64,9 @@ class Configurator
             } else {
                 $config->setAutoGenerateProxyClasses(false);
             }
+
+            Type::overrideType('datetime', UTCDateTimeType::class);
+            Type::overrideType('datetimetz', UTCDateTimeType::class);
 
             return EntityManager::create($settings, $config);
         };

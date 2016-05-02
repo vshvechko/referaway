@@ -24,7 +24,7 @@ class Referral extends AbstractEntity
     const STATUS_COMPLETED = 1;
     const STATUS_FAILED = 2;
 
-    protected $notPopulatedFields = ['owner', 'images', 'customFields'];
+    protected $notPopulatedFields = ['owner', 'images', 'customFields', 'created'];
 
     /**
      * @var Contact
@@ -88,7 +88,7 @@ class Referral extends AbstractEntity
         $this->customFields = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->setStatus(self::STATUS_PENDING);
-        $this->setCreated(new \DateTime('now', new \DateTimeZone('UTC')));
+        $this->setCreated(new \DateTime('now'));
     }
 
     public function getCustomFields($type = null) {
