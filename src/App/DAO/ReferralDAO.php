@@ -47,6 +47,28 @@ class ReferralDAO extends AbstractDAO
         return $entity;
     }
 
+    public function updateReferral(Referral $entity, $data, $owner, $target, $customFields = null) {
+        $entity->populate($data);
+        $entity->setOwner($owner)
+            ->setTarget($target);
+
+        // set custom fields
+        $fields = [];
+        if (is_array($customFields)) {
+            foreach ($customFields as $fieldData) {
+                $field = new ReferralCustomField();
+                $field->populate($fieldData);
+                $field->setReferral($entity);
+                $fields[] = $field;
+            }
+            $entity->setCustomFields($fields);
+        }
+
+        $this->save($entity);
+
+        return $entity;
+    }
+
     /**
      * @param User $user
      * @param null $search

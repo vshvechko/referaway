@@ -117,7 +117,7 @@ class Referral extends AbstractEntity
     }
 
     public function setCustomFields(array $customFields) {
-        $this->customFields = new ArrayCollection();
+        $this->customFields->clear();
         foreach ($customFields as $customField) {
             $this->customFields->add($customField);
         }
@@ -215,6 +215,9 @@ class Referral extends AbstractEntity
     public function setStatus($status)
     {
         $this->status = $status;
+        if ($this->status == self::STATUS_COMPLETED) {
+            $this->setDateCompleted(new \DateTime('now'));
+        }
         return $this;
     }
 
@@ -272,9 +275,6 @@ class Referral extends AbstractEntity
         return $this;
     }
 
-    /**
-     * @return ArrayCollection
-     */
     public function getImages()
     {
         return $this->images->toArray();

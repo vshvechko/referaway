@@ -113,6 +113,11 @@ class Referral extends AbstractResource
 
             $this->addValidator('name', v::notEmpty()->length(1, 255)->setName('Name'));
             $this->addValidator(
+                'status',
+                v::optional(v::in([ReferralEntity::STATUS_PENDING, ReferralEntity::STATUS_COMPLETED, ReferralEntity::STATUS_FAILED]))
+                    ->setName('Status')
+            );
+            $this->addValidator(
                 'type',
                 v::in([ReferralEntity::TYPE_CUSTOMER, ReferralEntity::TYPE_VENDOR, ReferralEntity::TYPE_SELF])
                     ->setName('Type')
@@ -163,6 +168,89 @@ class Referral extends AbstractResource
             }
             
             $entity = $this->getService()->createReferral($data, $user, $target, $customFields);
+
+            return ['referral' => (new ReferralHelper())->exportArray($entity, $this->getServiceLocator()->get('imageService'))];
+        } catch (ValidationException $e) {
+            throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
+        } catch (\InvalidArgumentException $e) {
+            throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
+        }
+    }
+
+    public function put($id) {
+        $user = $this->authenticateUser();
+        $data = $this->getRequest()->getParsedBody();
+
+        $entity = $this->getService()->findById($id);
+        if (!$entity) {
+            throw new StatusException('Not found', self::STATUS_NOT_FOUND);
+        }
+        if (!$entity->canAdmin($user)) {
+            throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
+        }
+
+        try {
+            $addressValidator = v::notEmpty()->length(null, 255);
+            $emailValidator = v::email()->length(null, 32);
+            $phoneValidator = v::phone()->length(null, 32);
+
+            $this->addValidator('name', v::notEmpty()->length(1, 255)->setName('Name'));
+            $this->addValidator(
+                'status',
+                v::optional(v::in([ReferralEntity::STATUS_PENDING, ReferralEntity::STATUS_COMPLETED, ReferralEntity::STATUS_FAILED]))
+                    ->setName('Status')
+            );
+            $this->addValidator(
+                'type',
+                v::in([ReferralEntity::TYPE_CUSTOMER, ReferralEntity::TYPE_VENDOR, ReferralEntity::TYPE_SELF])
+                    ->setName('Type')
+            );
+            $this->addValidator(self::REQUEST_CUSTOM_FIELDS, v::optional(v::arrayType())->setName(self::REQUEST_CUSTOM_FIELDS));
+            if (isset($data['type']) && $data['type'] != ReferralEntity::TYPE_SELF) {
+                $this->addValidator(self::REQUEST_TARGET, v::notEmpty()->setName(self::REQUEST_TARGET));
+            }
+            $this->validateArray($data);
+
+            $target = null;
+            if ($data['type'] != ReferralEntity::TYPE_SELF) {
+                $target = $this->getContactService()->findById($data[self::REQUEST_TARGET]);
+                if (!$target || $target->getOwner() != $user) {
+                    throw new StatusException('Target not found', self::STATUS_NOT_FOUND);
+                }
+            }
+
+            $customFields = (isset($data[self::REQUEST_CUSTOM_FIELDS]) && is_array($data[self::REQUEST_CUSTOM_FIELDS]))
+                ? $data[self::REQUEST_CUSTOM_FIELDS]
+                : null;
+            if (!empty($customFields)) {
+                $this->clearValidators();
+                $this->addValidator(
+                    'type',
+                    v::in([ReferralCustomField::TYPE_EMAIL, ReferralCustomField::TYPE_PHONE, ReferralCustomField::TYPE_ADDRESS])
+                        ->setName('custom field type')
+                );
+                $emailValidator->setName('custom email');
+                $phoneValidator->setName('custom phone');
+                $addressValidator->setName('custom address');
+                foreach ($customFields as $fieldData) {
+                    if (!empty($fieldData['type'])) {
+                        switch ($fieldData['type']) {
+                            case ReferralCustomField::TYPE_ADDRESS:
+                                $this->addValidator('value', $addressValidator);
+                                break;
+                            case ReferralCustomField::TYPE_EMAIL:
+                                $this->addValidator('value', $emailValidator);
+                                break;
+                            case ReferralCustomField::TYPE_PHONE:
+                                $this->addValidator('value', $phoneValidator);
+                                break;
+                        }
+                    }
+                    $this->validateArray($fieldData);
+                }
+            }
+
+            $entity = $this->getService()->updateReferral($entity, $data, $user, $target, $customFields);
 
             return ['referral' => (new ReferralHelper())->exportArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {
