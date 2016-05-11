@@ -57,6 +57,12 @@ class Contact extends AbstractEntity
     protected $image;
 
     /**
+     * @Column(name="note", type="text")
+     * @var string
+     */
+    protected $note;
+
+    /**
      * @var ArrayCollection
      * @OneToMany(targetEntity="ContactCustomField", mappedBy="contact", cascade={"persist", "remove"}, orphanRemoval=true)
      */
@@ -279,6 +285,22 @@ class Contact extends AbstractEntity
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNote() {
+        return $this->note;
+    }
+
+    /**
+     * @param string $note
+     * @return $this
+     */
+    public function setNote($note) {
+        $this->note = $note;
         return $this;
     }
     

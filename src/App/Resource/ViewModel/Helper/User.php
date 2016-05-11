@@ -34,6 +34,7 @@ trait User {
             'firstName' => $contact->getFirstName(),
             'lastName' => $contact->getLastName(),
             'business' => $contact->getBusiness(),
+            'note' => $contact->getNote(),
             'image' => $imgService->getUrl($contact->getImage()),
             'customFields' => array_map(
                 function (ContactCustomField $field) {
