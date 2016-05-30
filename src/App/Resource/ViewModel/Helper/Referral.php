@@ -6,6 +6,7 @@ namespace App\Resource\ViewModel\Helper;
 use App\Entity\ReferralCustomField;
 use App\Entity\ReferralImage;
 use App\Manager\ResourceManagerInterface;
+use App\Resource\ViewModel\Helper\User as UserHelper;
 
 class Referral
 {
@@ -24,6 +25,7 @@ class Referral
                 'firstName' => $entity->getOwner()->getFirstName(),
                 'lastName' => $entity->getOwner()->getLastName(),
             ],
+            'target' => (new UserHelper())->exportContactShortArray($entity->getTarget()),
             'customFields' => array_map(
                 function (ReferralCustomField $field) {
                     return $this->exportCustomField($field);

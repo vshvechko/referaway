@@ -6,9 +6,9 @@ use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
 use App\Resource;
 use App\DAO\UserDAO;
+use App\Resource\ViewModel\Helper\User as UserHelper;
 
 class User extends AbstractResource {
-    use Resource\ViewModel\Helper\User;
     /**
      * @var UserDAO
      */
@@ -34,7 +34,7 @@ class User extends AbstractResource {
              */
             $data = [];
             foreach ($users as $user) {
-                $data[] = $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
+                $data[] = (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
             }
 
         } else {
@@ -42,7 +42,7 @@ class User extends AbstractResource {
             if ($user === null) {
                 throw new StatusException('User not found', self::STATUS_NOT_FOUND);
             }
-            $data = $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
+            $data = (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
         }
 
         return $data;
@@ -56,7 +56,7 @@ class User extends AbstractResource {
 
         try {
             $user = $this->getService()->createUser($obj);
-            return $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
+            return (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
@@ -74,7 +74,7 @@ class User extends AbstractResource {
             throw new StatusException('Not found', self::STATUS_NOT_FOUND);
         }
 
-        return $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
+        return (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
 
     }
 

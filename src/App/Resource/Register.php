@@ -11,9 +11,9 @@ use App\Manager\SMSManager;
 use App\Resource;
 use Respect\Validation\Exceptions\ValidationException;
 use Respect\Validation\Validator as v;
+use App\Resource\ViewModel\Helper\User as UserHelper;
 
 class Register extends AbstractResource {
-    use Resource\ViewModel\Helper\User;
     /**
      * @var UserDAO
      */
@@ -114,7 +114,7 @@ class Register extends AbstractResource {
                 $logger->debug($e->getTraceAsString());
             }
             return [
-                'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
+                'user' => (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
                     'token' => $user->getToken(),
                     'type' => 'Bearer',

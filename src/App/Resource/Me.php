@@ -6,10 +6,9 @@ namespace App\Resource;
 use App\DAO\UserDAO;
 use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
-use App\Resource\ViewModel\Helper\User;
+use App\Resource\ViewModel\Helper\User as UserHelper;
 
 class Me extends AbstractResource {
-    use User;
 
     const REQUEST_ACTION = 'action';
     const ACTION_ACTIVATE = 'activate';
@@ -46,7 +45,7 @@ class Me extends AbstractResource {
     public function get($id, $subId = null) {
         $user = $this->authenticateUser();
 
-        return ['user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService'))];
+        return ['user' => (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'))];
     }
 
     public function post($id = null) {

@@ -6,10 +6,9 @@ namespace App\Resource;
 use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use App\Helper\EncryptionHelper;
-use App\Resource\ViewModel\Helper\User;
+use App\Resource\ViewModel\Helper\User as UserHelper;
 
 class Login extends AbstractResource {
-    use User;
     /**
      * @var UserDAO
      */
@@ -66,7 +65,7 @@ class Login extends AbstractResource {
             $this->getUserService()->save($user);
 
             return [
-                'user' => $this->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
+                'user' => (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService')),
                 'accessToken' => [
                     'token' => $user->getToken(),
                     'type' => 'Bearer',

@@ -13,7 +13,6 @@ use Respect\Validation\Validator as v;
 
 class Contact extends AbstractResource
 {
-    use UserHelper;
 
     /**
      * @var ContactDAO
@@ -61,7 +60,7 @@ class Contact extends AbstractResource
              */
             $data = [];
             foreach ($entities as $entity) {
-                $data[] = $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'));
+                $data[] = (new UserHelper())->exportContactArray($entity, $this->getServiceLocator()->get('imageService'));
             }
             $data = ['contacts' => $data];
         } else {
@@ -69,7 +68,7 @@ class Contact extends AbstractResource
             if ($entity === null) {
                 throw new StatusException('Contact not found', self::STATUS_NOT_FOUND);
             }
-            $data = ['contact' => $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
+            $data = ['contact' => (new UserHelper())->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
         }
 
         return $data;
@@ -129,7 +128,7 @@ class Contact extends AbstractResource
 
             $entity = $this->getService()->createContact($data, $user);
 
-            return ['contact' => $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
+            return ['contact' => (new UserHelper())->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {
@@ -196,7 +195,7 @@ class Contact extends AbstractResource
 
             $entity = $this->getService()->updateContact($contact, $data, $user);
 
-            return ['contact' => $this->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
+            return ['contact' => (new UserHelper())->exportContactArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);
         } catch (\InvalidArgumentException $e) {

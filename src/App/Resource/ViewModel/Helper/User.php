@@ -7,7 +7,7 @@ use App\Entity\Contact as ContactEntity;
 use App\Entity\ContactCustomField;
 use App\Manager\ResourceManagerInterface;
 
-trait User {
+class User {
     public function exportUserArray(UserEntity $user, ResourceManagerInterface $imgService) {
         return [
             'id' => $user->getId(),
@@ -43,6 +43,26 @@ trait User {
                 $contact->getCustomFields()
             ),
         ];
+    }
+
+    public function exportContactShortArray(ContactEntity $contact = null) {
+        if ($contact) {
+            return [
+                'id' => $contact->getId(),
+                'type' => $contact->getType(),
+                'firstName' => $contact->getFirstName(),
+                'lastName' => $contact->getLastName(),
+                'business' => $contact->getBusiness(),
+                'note' => $contact->getNote(),
+                'customFields' => array_map(
+                    function (ContactCustomField $field) {
+                        return $this->exportCustomField($field);
+                    },
+                    $contact->getCustomFields()
+                ),
+            ];
+        }
+        return null;
     }
 
     protected function exportCustomField(ContactCustomField $field) {
