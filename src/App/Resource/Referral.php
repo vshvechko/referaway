@@ -194,7 +194,7 @@ class Referral extends AbstractResource
             $emailValidator = v::email()->length(null, 32);
             $phoneValidator = v::phone()->length(null, 32);
 
-            $this->addValidator('name', v::notEmpty()->length(1, 255)->setName('Name'));
+            $this->addValidator('name', v::optional(v::notEmpty()->length(1, 255)->setName('Name')));
             $this->addValidator(
                 'status',
                 v::optional(v::in([ReferralEntity::STATUS_PENDING, ReferralEntity::STATUS_COMPLETED, ReferralEntity::STATUS_FAILED]))
@@ -202,8 +202,8 @@ class Referral extends AbstractResource
             );
             $this->addValidator(
                 'type',
-                v::in([ReferralEntity::TYPE_CUSTOMER, ReferralEntity::TYPE_VENDOR, ReferralEntity::TYPE_SELF])
-                    ->setName('Type')
+                v::optional(v::in([ReferralEntity::TYPE_CUSTOMER, ReferralEntity::TYPE_VENDOR, ReferralEntity::TYPE_SELF])
+                    ->setName('Type'))
             );
             $this->addValidator(self::REQUEST_CUSTOM_FIELDS, v::optional(v::arrayType())->setName(self::REQUEST_CUSTOM_FIELDS));
             if (isset($data['type']) && $data['type'] != ReferralEntity::TYPE_SELF) {
@@ -212,7 +212,7 @@ class Referral extends AbstractResource
             $this->validateArray($data);
 
             $target = null;
-            if ($data['type'] != ReferralEntity::TYPE_SELF) {
+            if (isset($data['type']) && $data['type'] != ReferralEntity::TYPE_SELF) {
                 $target = $this->getContactService()->findById($data[self::REQUEST_TARGET]);
                 if (!$target || $target->getOwner() != $user) {
                     throw new StatusException('Target not found', self::STATUS_NOT_FOUND);
