@@ -53,10 +53,13 @@ class ReferralDAO extends AbstractDAO
         if (!is_null($target)) {
             $entity->setTarget($target);
         }
+        if (isset($data['isRead'])) {
+            $entity->setIsRead($data['isRead'] ? 1 : 0);
+        }
 
         // set custom fields
-        $fields = [];
         if (is_array($customFields)) {
+            $fields = [];
             foreach ($customFields as $fieldData) {
                 $field = new ReferralCustomField();
                 $field->populate($fieldData);
@@ -113,7 +116,8 @@ class ReferralDAO extends AbstractDAO
                     $qb->expr()->eq('r.type', ':type')
                 )
             )
-        )->setParameter('user', $user)
+        )->andWhere($qb->expr()->neq('r.isRead', 1))
+            ->setParameter('user', $user)
             ->setParameter('type', Referral::TYPE_SELF);
 
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getResult($hydrate ? Query::HYDRATE_ARRAY : null);

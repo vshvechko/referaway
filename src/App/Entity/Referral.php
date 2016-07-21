@@ -81,6 +81,12 @@ class Referral extends AbstractEntity
      */
     protected $images;
 
+    /**
+     * @Column(name="is_read", type="integer", length=1, nullable=false)
+     * @var int
+     */
+    protected $isRead;
+
 
     public function __construct()
     {
@@ -88,6 +94,7 @@ class Referral extends AbstractEntity
         $this->customFields = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->setStatus(self::STATUS_PENDING);
+        $this->setIsRead(0);
         $this->setCreated(new \DateTime('now'));
     }
 
@@ -303,4 +310,22 @@ class Referral extends AbstractEntity
         
         return false;
     }
+
+    /**
+     * @return int
+     */
+    public function getIsRead() {
+        return $this->isRead;
+    }
+
+    /**
+     * @param int $isRead
+     * @return int
+     */
+    public function setIsRead($isRead) {
+        $this->isRead = $isRead;
+        return $this->isRead;
+    }
+
+
 }

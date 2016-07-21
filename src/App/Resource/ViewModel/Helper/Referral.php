@@ -20,6 +20,7 @@ class Referral
             'revenue' => $entity->getRevenue(),
             'created' => $entity->getCreated()->format(\DateTime::ISO8601),
             'dateCompleted' => $entity->getDateCompleted() ? $entity->getDateCompleted()->format(\DateTime::ISO8601) : null,
+            'isRead' => $entity->getIsRead(),
             'owner' => [
                 'id' => $entity->getOwner()->getId(),
                 'firstName' => $entity->getOwner()->getFirstName(),
