@@ -6,6 +6,7 @@ use App\Entity\User as UserEntity;
 use App\Entity\Contact as ContactEntity;
 use App\Entity\ContactCustomField;
 use App\Manager\ResourceManagerInterface;
+use App\Resource\ViewModel\Helper\Category as CategoryHelper;
 
 class User {
     public function exportUserArray(UserEntity $user, ResourceManagerInterface $imgService) {
@@ -21,7 +22,8 @@ class User {
             'city' => $user->getCity(),
             'zip' => $user->getZip(),
             'isActive' => $user->getIsActive(),
-            'image' => $imgService->getUrl($user->getImage())
+            'image' => $imgService->getUrl($user->getImage()),
+            'category' => (new CategoryHelper())->exportArray($user->getCategory())
         ];
     }
 

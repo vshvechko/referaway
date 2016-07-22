@@ -3,6 +3,7 @@
 namespace App\Resource;
 
 
+use App\DAO\CategoryDAO;
 use App\DAO\ContactDAO;
 use App\DAO\UserDAO;
 use App\Entity\User as UserEntity;
@@ -22,6 +23,10 @@ class Register extends AbstractResource {
      * @var ContactDAO
      */
     private $contactService;
+    /**
+     * @var CategoryDAO
+     */
+    private $categoryService;
 
     /**
      * Get user service
@@ -29,6 +34,7 @@ class Register extends AbstractResource {
     public function init() {
         $this->setUserService(new UserDAO($this->getEntityManager()));
         $this->setContactService(new ContactDAO($this->getEntityManager()));
+        $this->setCategoryService(new CategoryDAO($this->getEntityManager()));
     }
 
     /**
@@ -57,6 +63,20 @@ class Register extends AbstractResource {
      */
     public function setContactService($contactService) {
         $this->contactService = $contactService;
+    }
+
+    /**
+     * @return CategoryDAO
+     */
+    public function getCategoryService() {
+        return $this->categoryService;
+    }
+
+    /**
+     * @param CategoryDAO $categoryService
+     */
+    public function setCategoryService($categoryService) {
+        $this->categoryService = $categoryService;
     }
 
     public function post($id = null) {
@@ -93,6 +113,15 @@ class Register extends AbstractResource {
 
             $user = new UserEntity();
             $user->populate($data);
+
+            // category
+            if (!empty($data['categoryId'])) {
+                $category = $this->getCategoryService()->findById($data['categoryId']);
+                if (is_null($category)) {
+                    throw new StatusException('Category not found', self::STATUS_NOT_FOUND);
+                }
+                $user->setCategory($category);
+            }
 
 //            $code = $encoder->generateShortCode();
 //            $user->setActivationCode($code)

@@ -16,11 +16,11 @@ class User extends AbstractEntity {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
-    protected $notPopulatedFields = ['token', 'isactive', 'activationcode'];
+    protected $notPopulatedFields = ['token', 'isactive', 'activationcode', 'category'];
 
     public function __construct() {
         parent::__construct();
-        $this->groups = new ArrayCollection();
+//        $this->groups = new ArrayCollection();
         $this->contacts = new ArrayCollection();
     }
 
@@ -107,6 +107,13 @@ class User extends AbstractEntity {
      * @var string
      */
     protected $image;
+
+    /**
+     * @var Category
+     * @ManyToOne(targetEntity="Category")
+     * @JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
+     */
+    protected $category;
 
 //    /**
 //     * @var ArrayCollection
@@ -379,6 +386,24 @@ class User extends AbstractEntity {
     public function setImage($image)
     {
         $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @return Category|null
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param mixed $category
+     * @return $this
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
         return $this;
     }
     
