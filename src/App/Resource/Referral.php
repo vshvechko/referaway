@@ -273,21 +273,8 @@ class Referral extends AbstractResource
             throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
         }
 
-        $images = [];
-        /**
-         * @var ReferralImage $image
-         */
-        foreach ($referral->getImages() as $image) {
-            $images[] = $image->getImage();
-        }
-        $this->getService()->remove($referral);
-
-        if (!empty($images)) {
-            $imgService = $this->getServiceLocator()->get('imageService');
-            foreach ($images as $fileName) {
-                $imgService->delete($fileName);
-            }
-        }
+        $imgService = $this->getServiceLocator()->get('imageService');
+        $this->getService()->removeReferral($referral, $imgService);
     }
 
 }

@@ -199,7 +199,7 @@ class Contact extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return User
      */
     public function getUser()
     {

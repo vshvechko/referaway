@@ -2,10 +2,12 @@
 
 namespace App\DAO;
 
+use App\Entity\Group;
 use App\Entity\Referral;
 use App\Entity\ReferralCustomField;
 use App\Entity\ReferralImage;
 use App\Entity\User;
+use App\Entity\UserGroup;
 use Doctrine\ORM\Query;
 
 class ReferralDAO extends AbstractDAO
@@ -155,5 +157,45 @@ class ReferralDAO extends AbstractDAO
             ->where($qb->expr()->eq('e.id', ':id'))->setParameter('id', $id);
 
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
+
+    public function getCountInGroup(Group $group) {
+        $memberIds = [$group->getOwner()->getId()];
+        /**
+         * @var UserGroup $userGroup
+         */
+        foreach ($group->getUserGroups() as $userGroup) {
+            if ($userGroup->getMemberStatus() == UserGroup::MEMBER_STATUS_MEMBER) {
+                $memberIds[] = $userGroup->getContact()->getUser()->getId();
+            }
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('COUNT(r)')
+            ->from($this->getRepositoryName(), 'r')
+            ->innerJoin('r.target', 'rt')
+            ->where($qb->expr()->in('r.owner', ':members'))
+            ->andWhere($qb->expr()->in('rt.user', ':members'))
+            ->setParameter('members', $memberIds);
+
+        return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function removeReferral($referral, $imgService) {
+        $images = [];
+        /**
+         * @var ReferralImage $image
+         * @var Referral $referral
+         */
+        foreach ($referral->getImages() as $image) {
+            $images[] = $image->getImage();
+        }
+        $this->remove($referral);
+
+        if (!empty($images)) {
+            foreach ($images as $fileName) {
+                $imgService->delete($fileName);
+            }
+        }
     }
 }

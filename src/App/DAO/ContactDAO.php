@@ -19,6 +19,10 @@ class ContactDAO extends AbstractDAO {
         return 'App\Entity\UserGroup';
     }
 
+    protected function getReferralRepositoryName() {
+        return 'App\Entity\Referral';
+    }
+
     /**
      * @param $data
      * @return UserEntity
@@ -189,8 +193,9 @@ class ContactDAO extends AbstractDAO {
         $this->flush();
     }
     
-    public function removeContact($entity, $flush = true)
+    public function removeContact($entity, $imgService, $flush = true)
     {
+        // remove usergroup
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('ug')
             ->from($this->getUserGroupRepositoryName(), 'ug')
@@ -200,6 +205,19 @@ class ContactDAO extends AbstractDAO {
             ->setParameter('contact', $entity);
         foreach ($qb->getQuery()->getResult() as $userGroup) {
             $this->remove($userGroup, false);
+        }
+
+        // remove referrals
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('r')
+            ->from($this->getReferralRepositoryName(), 'r')
+            ->where(
+                $qb->expr()->eq('r.target', ':contact')
+            )
+            ->setParameter('contact', $entity);
+        $referralDao = new ReferralDAO($this->getEntityManager());
+        foreach ($qb->getQuery()->getResult() as $referral) {
+            $referralDao->removeReferral($referral, $imgService);
         }
 
         return $this->remove($entity, $flush);

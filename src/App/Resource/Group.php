@@ -5,6 +5,7 @@ namespace App\Resource;
 
 use App\DAO\ContactDAO;
 use App\DAO\GroupDAO;
+use App\DAO\ReferralDAO;
 use App\Entity\Group as GroupEntity;
 use App\Entity\Contact as ContactEntity;
 use App\Entity\User;
@@ -34,6 +35,10 @@ class Group extends AbstractResource {
      * @var GroupDAO
      */
     private $service;
+    /**
+     * @var ReferralDAO
+     */
+    private $referralService;
 
     /**
      * @return GroupDAO
@@ -55,6 +60,7 @@ class Group extends AbstractResource {
      */
     public function init() {
         $this->setService(new GroupDAO($this->getEntityManager()));
+        $this->referralService = new ReferralDAO($this->getEntityManager());
     }
 
     public function get($id, $subId = null) {
@@ -69,9 +75,12 @@ class Group extends AbstractResource {
              */
             $data = [];
             foreach ($entities as $entity) {
-                $data[] = $this->exportGroupShortArray($entity, $this->getServiceLocator()->get('imageService'), $user);
+                $formatted = $this->exportGroupShortArray($entity, $this->getServiceLocator()->get('imageService'), $user);
+                $formatted['referralsCount'] = $this->referralService->getCountInGroup($entity);
+                $data[] = $formatted;
             }
             $data = ['groups' => $data];
+//            var_dump($data); exit;
         } else {
             $entity = $this->getService()->getGroupMembers($id);
             if ($entity === null) {

@@ -218,13 +218,14 @@ class Contact extends AbstractResource
         if ($contact->getOwner()->getId() != $user->getId()) {
             throw new StatusException('Permission violated', self::STATUS_UNAUTHORIZED);
         }
-        
+
+        $imgService = $this->getServiceLocator()->get('imageService');
         $oldImage = $contact->getImage();
         
-        $this->getService()->removeContact($contact);
+        $this->getService()->removeContact($contact, $imgService);
         
         if ($oldImage) {
-            $this->getServiceLocator()->get('imageService')->delete($oldImage);
+            $imgService->delete($oldImage);
         }
     }
 
