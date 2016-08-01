@@ -62,9 +62,12 @@ class UserDAO extends AbstractDAO {
         return true;
     }
 
-    public function isEmailExist($email) {
+    public function isEmailExist($email, $exceptId = null) {
         $user = $this->findByEmail($email);
-        return $user !== null;
+        if (!empty($user)) {
+            return $exceptId ? ($user->getId() != $exceptId) : true;
+        }
+        return false;
     }
 
     /**

@@ -7,10 +7,13 @@ use App\DAO\UserDAO;
 use App\Exception\StatusException;
 use App\Resource\AbstractMediaResource;
 
-class User extends AbstractMediaResource
+class UserImage extends AbstractMediaResource
 {
     public function post($id) {
         $user = $this->authenticateUser();
+        if ($id != $user->getId()) {
+            throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED);
+        }
 
         $oldImage = $user->getImage();
 
