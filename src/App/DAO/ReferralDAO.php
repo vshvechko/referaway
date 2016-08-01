@@ -165,7 +165,7 @@ class ReferralDAO extends AbstractDAO
          * @var UserGroup $userGroup
          */
         foreach ($group->getUserGroups() as $userGroup) {
-            if ($userGroup->getMemberStatus() == UserGroup::MEMBER_STATUS_MEMBER) {
+            if ($userGroup->getMemberStatus() == UserGroup::MEMBER_STATUS_MEMBER && !empty($userGroup->getContact()->getUser())) {
                 $memberIds[] = $userGroup->getContact()->getUser()->getId();
             }
         }
