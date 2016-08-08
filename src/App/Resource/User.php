@@ -131,6 +131,7 @@ class User extends AbstractResource {
             $this->addValidator('city', v::optional(v::length(null, 32))->setName('city'));
             $this->addValidator('country', v::optional(v::length(null, 32))->setName('country'));
             $this->addValidator('zip', v::optional(v::length(5, 6))->setName('zip'));
+            $this->addValidator('state', v::optional(v::length(null, 32)->setName('state')));
 
             $this->validateArray($data);
 

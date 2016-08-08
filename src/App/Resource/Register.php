@@ -90,6 +90,7 @@ class Register extends AbstractResource {
             $this->addValidator('lastName', v::notEmpty()->length(1, 32)->setName('lastName'));
             $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
             $this->addValidator('code', v::notEmpty()->setName('code'));
+            $this->addValidator('state', v::optional(v::length(null, 32)->setName('state')));
 
             $this->validateArray($data);
 

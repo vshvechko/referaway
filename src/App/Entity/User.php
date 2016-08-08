@@ -76,6 +76,12 @@ class User extends AbstractEntity {
      * @Column(type="string", length=32, nullable=true)
      * @var string
      */
+    protected $state;
+
+    /**
+     * @Column(type="string", length=32, nullable=true)
+     * @var string
+     */
     protected $country;
 
     /**
@@ -404,6 +410,22 @@ class User extends AbstractEntity {
     public function setCategory($category)
     {
         $this->category = $category;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState() {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     * @return $this
+     */
+    public function setState($state) {
+        $this->state = $state;
         return $this;
     }
     
