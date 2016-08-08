@@ -23,7 +23,8 @@ class User {
             'zip' => $user->getZip(),
             'isActive' => $user->getIsActive(),
             'image' => $imgService->getUrl($user->getImage()),
-            'category' => (new CategoryHelper())->exportArray($user->getCategory())
+            'category' => (new CategoryHelper())->exportArray($user->getCategory()),
+            'state' => $user->getState(),
         ];
     }
 
