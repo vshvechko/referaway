@@ -2,6 +2,7 @@
 
 namespace App\Resource;
 
+use App\DAO\CategoryDAO;
 use App\DAO\ContactDAO;
 use App\Entity\User as UserEntity;
 use App\Exception\StatusException;
@@ -23,12 +24,33 @@ class User extends AbstractResource {
     private $contactService;
 
     /**
+     * @var CategoryDAO
+     */
+    private $categoryService;
+
+    /**
      * Get user service
      */
     public function init() {
         $this->setService(new UserDAO($this->getEntityManager()));
         $this->setContactService(new ContactDAO($this->getEntityManager()));
+        $this->setCategoryService(new CategoryDAO($this->getEntityManager()));
     }
+
+    /**
+     * @return CategoryDAO
+     */
+    public function getCategoryService() {
+        return $this->categoryService;
+    }
+
+    /**
+     * @param CategoryDAO $categoryService
+     */
+    public function setCategoryService($categoryService) {
+        $this->categoryService = $categoryService;
+    }
+
 
     /**
      * @return ContactDAO
@@ -118,6 +140,14 @@ class User extends AbstractResource {
             }
             if (!empty($data['password'])) {
                 $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
+            }
+
+            if (!empty($data['categoryId'])) {
+                $category = $this->getCategoryService()->findById($data['categoryId']);
+                if (is_null($category)) {
+                    throw new StatusException('Category not found', self::STATUS_NOT_FOUND);
+                }
+                $user->setCategory($category);
             }
 
             $user->populate($data);
