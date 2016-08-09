@@ -49,6 +49,12 @@ class User extends AbstractEntity {
     protected $lastName;
 
     /**
+     * @Column(name="title", type="string", length=32)
+     * @var string
+     */
+    protected $title;
+
+    /**
      * @Column(type="string", length=32)
      * @var string
      */
@@ -426,6 +432,22 @@ class User extends AbstractEntity {
      */
     public function setState($state) {
         $this->state = $state;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle() {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return $this
+     */
+    public function setTitle($title) {
+        $this->title = $title;
         return $this;
     }
     

@@ -25,6 +25,7 @@ class User {
             'image' => $imgService->getUrl($user->getImage()),
             'category' => (new CategoryHelper())->exportArray($user->getCategory()),
             'state' => $user->getState(),
+            'title' => $user->getTitle(),
         ];
     }
 
