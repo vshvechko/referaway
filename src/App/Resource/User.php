@@ -144,10 +144,13 @@ class User extends AbstractResource {
                 $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
             }
 
-            if (!empty($data['categoryId'])) {
-                $category = $this->getCategoryService()->findById($data['categoryId']);
-                if (is_null($category)) {
-                    throw new StatusException('Category not found', self::STATUS_NOT_FOUND);
+            if (array_key_exists('categoryId', $data)) {
+                $category = null;
+                if ($data['categoryId']) {
+                    $category = $this->getCategoryService()->findById($data['categoryId']);
+                    if (is_null($category)) {
+                        throw new StatusException('Category not found', self::STATUS_NOT_FOUND);
+                    }
                 }
                 $user->setCategory($category);
             }
