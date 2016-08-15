@@ -13,6 +13,12 @@ namespace App\Entity;
 class ReferralCustomField extends AbstractCustomField
 {
     use WithAuthoincrementId;
+    
+    public function __construct()
+    {
+        parent::__construct();
+        $this->group = 0;
+    }
 
     protected $notPopulatedFields = ['referral'];
 
@@ -22,6 +28,12 @@ class ReferralCustomField extends AbstractCustomField
      * @JoinColumn(name="referral_id", referencedColumnName="id", nullable=false)
      */
     protected $referral;
+
+    /**
+     * @Column(type="integer", length=1, nullable=false, options={"default" : 0})
+     * @var int
+     */
+    protected $group;
 
     /**
      * @return Referral
@@ -41,5 +53,23 @@ class ReferralCustomField extends AbstractCustomField
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
 
+    /**
+     * @param int $group
+     * @return $this
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+        return $this;
+    }
+
+    
 }

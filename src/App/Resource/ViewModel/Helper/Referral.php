@@ -45,7 +45,8 @@ class Referral
     protected function exportCustomField(ReferralCustomField $field) {
         return [
             'type' => $field->getType(),
-            'value' => $field->getValue()
+            'value' => $field->getValue(),
+            'group' => $field->getGroup(),
         ];
     }
 
