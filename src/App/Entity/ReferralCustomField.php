@@ -30,7 +30,7 @@ class ReferralCustomField extends AbstractCustomField
     protected $referral;
 
     /**
-     * @Column(type="integer", length=1, nullable=false, options={"default" : 0})
+     * @Column(name="`group`", type="integer", length=1, nullable=false, options={"default" : 0})
      * @var int
      */
     protected $group;
