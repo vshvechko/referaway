@@ -143,7 +143,7 @@ class Referral extends AbstractResource
                 $this->clearValidators();
                 $this->addValidator(
                     'type',
-                    v::in([ReferralCustomField::TYPE_EMAIL, ReferralCustomField::TYPE_PHONE, ReferralCustomField::TYPE_ADDRESS])
+                    v::in([ReferralCustomField::TYPE_EMAIL, ReferralCustomField::TYPE_PHONE, ReferralCustomField::TYPE_ADDRESS, ReferralCustomField::TYPE_NAME])
                         ->setName('custom field type')
                 );
                 $emailValidator->setName('custom email');
@@ -160,6 +160,9 @@ class Referral extends AbstractResource
                                 break;
                             case ReferralCustomField::TYPE_PHONE:
                                 $this->addValidator('value', $phoneValidator);
+                                break;
+                            default:
+                                $this->addValidator('value', v::notEmpty()->length(null, 255)->setName($fieldData['type']));
                                 break;
                         }
                     }
@@ -226,7 +229,7 @@ class Referral extends AbstractResource
                 $this->clearValidators();
                 $this->addValidator(
                     'type',
-                    v::in([ReferralCustomField::TYPE_EMAIL, ReferralCustomField::TYPE_PHONE, ReferralCustomField::TYPE_ADDRESS])
+                    v::in([ReferralCustomField::TYPE_EMAIL, ReferralCustomField::TYPE_PHONE, ReferralCustomField::TYPE_ADDRESS, ReferralCustomField::TYPE_NAME])
                         ->setName('custom field type')
                 );
                 $emailValidator->setName('custom email');
@@ -243,6 +246,9 @@ class Referral extends AbstractResource
                                 break;
                             case ReferralCustomField::TYPE_PHONE:
                                 $this->addValidator('value', $phoneValidator);
+                                break;
+                            default:
+                                $this->addValidator('value', v::notEmpty()->length(null, 255)->setName($fieldData['type']));
                                 break;
                         }
                     }
