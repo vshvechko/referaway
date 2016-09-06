@@ -16,6 +16,7 @@ class Referral
             'type' => $entity->getType(),
             'name' => $entity->getName(),
             'note' => $entity->getNote(),
+            'note1' => $entity->getNote1(),
             'status' => $entity->getStatus(),
             'revenue' => $entity->getRevenue(),
             'created' => $entity->getCreated()->format(\DateTime::ISO8601),

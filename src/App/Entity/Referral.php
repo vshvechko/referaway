@@ -42,6 +42,12 @@ class Referral extends AbstractEntity
      * @var string
      */
     protected $note;
+
+    /**
+     * @Column(name="note1", type="text")
+     * @var string
+     */
+    protected $note1;
     /**
      * @Column(type="integer", length=1, nullable=false)
      * @var int
@@ -325,6 +331,22 @@ class Referral extends AbstractEntity
     public function setIsRead($isRead) {
         $this->isRead = $isRead;
         return $this->isRead;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNote1() {
+        return $this->note1;
+    }
+
+    /**
+     * @param string $note1
+     * @return $this
+     */
+    public function setNote1($note1) {
+        $this->note1 = $note1;
+        return $this;
     }
 
 
