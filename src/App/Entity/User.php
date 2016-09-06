@@ -49,7 +49,7 @@ class User extends AbstractEntity {
     protected $lastName;
 
     /**
-     * @Column(name="title", type="string", length=32)
+     * @Column(name="title", type="string", length=32, nullable=true)
      * @var string
      */
     protected $title;
