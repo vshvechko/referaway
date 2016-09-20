@@ -38,13 +38,13 @@ class Referral extends AbstractEntity
      */
     protected $name;
     /**
-     * @Column(name="note", type="text")
+     * @Column(name="note", type="text", nullable=true)
      * @var string
      */
     protected $note;
 
     /**
-     * @Column(name="note1", type="text")
+     * @Column(name="note1", type="text", nullable=true)
      * @var string
      */
     protected $note1;
