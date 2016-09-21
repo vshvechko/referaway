@@ -92,6 +92,7 @@ class Register extends AbstractResource {
             $this->addValidator('code', v::notEmpty()->setName('code'));
             $this->addValidator('state', v::optional(v::length(null, 32)->setName('state')));
             $this->addValidator('title', v::optional(v::length(null, 32)->setName('title')));
+            $this->addValidator('password', v::notEmpty()->length(5, 32)->setName('password'));
 
             $this->validateArray($data);
 
@@ -106,15 +107,16 @@ class Register extends AbstractResource {
                 throw new \InvalidArgumentException('Code is not valid');
             }
 
-            $pass = $this->getServiceLocator()->get('encryptionHelper')->generatePassword();
-            $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($pass);
-
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
+//            $pass = $encoder->generatePassword();
+            $pass = $data['password'];
+
             $authManager = $this->getServiceLocator()->get('authService');
             $emailManager = $this->getServiceLocator()->get('mailManager');
 
             $user = new UserEntity();
             $user->populate($data);
+            $user->setPassword($encoder->getHash($pass));
 
             // category
             if (!empty($data['categoryId'])) {
@@ -151,8 +153,6 @@ class Register extends AbstractResource {
                     'type' => 'Bearer',
                     'expiresIn' => null
                 ],
-                // TODO remove code, send by sms instead
-//                'code' => $user->getActivationCode(),
             ];
         } catch (ValidationException $e) {
             throw new StatusException($e->getMainMessage(), self::STATUS_BAD_REQUEST);

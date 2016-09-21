@@ -141,7 +141,7 @@ class User extends AbstractResource {
                     throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
             }
             if (!empty($data['password'])) {
-                $data['password'] = $this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']);
+                $user->setPassword($this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']));
             }
 
             if (array_key_exists('categoryId', $data)) {

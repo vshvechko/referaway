@@ -16,7 +16,7 @@ class User extends AbstractEntity {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
-    protected $notPopulatedFields = ['token', 'isactive', 'activationcode', 'category'];
+    protected $notPopulatedFields = ['token', 'isactive', 'activationcode', 'category', 'password'];
 
     public function __construct() {
         parent::__construct();
