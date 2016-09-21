@@ -57,7 +57,7 @@ class Contact extends AbstractEntity
     protected $image;
 
     /**
-     * @Column(name="note", type="text")
+     * @Column(name="note", type="text", nullable=true)
      * @var string
      */
     protected $note;

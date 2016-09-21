@@ -92,7 +92,7 @@ class Register extends AbstractResource {
             $this->addValidator('code', v::notEmpty()->setName('code'));
             $this->addValidator('state', v::optional(v::length(null, 32)->setName('state')));
             $this->addValidator('title', v::optional(v::length(null, 32)->setName('title')));
-            $this->addValidator('password', v::notEmpty()->length(5, 32)->setName('password'));
+//            $this->addValidator('password', v::notEmpty()->length(5, 32)->setName('password'));
 
             $this->validateArray($data);
 
@@ -108,8 +108,8 @@ class Register extends AbstractResource {
             }
 
             $encoder = $this->getServiceLocator()->get('encryptionHelper');
-//            $pass = $encoder->generatePassword();
-            $pass = $data['password'];
+            $pass = $encoder->generatePassword();
+//            $pass = $data['password'];
 
             $authManager = $this->getServiceLocator()->get('authService');
             $emailManager = $this->getServiceLocator()->get('mailManager');
