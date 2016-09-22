@@ -42,7 +42,7 @@ class Me extends AbstractResource {
         $this->userService = $userService;
     }
 
-    public function get($id, $subId = null) {
+    public function get($id = null, $subId = null) {
         $user = $this->authenticateUser();
 
         return ['user' => (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'))];

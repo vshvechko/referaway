@@ -16,7 +16,7 @@ class User extends AbstractEntity {
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
-    protected $notPopulatedFields = ['token', 'isactive', 'activationcode', 'category', 'password'];
+    protected $notPopulatedFields = ['token', 'isactive', 'activationcode', 'category', 'password', 'device'];
 
     public function __construct() {
         parent::__construct();
@@ -138,6 +138,12 @@ class User extends AbstractEntity {
      * @OneToMany(targetEntity="Contact", mappedBy="owner", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     protected $contacts;
+
+    /**
+     * @var Device
+     * @OneToOne(targetEntity="Device", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    protected $device;
 
     /**
      * @return string
@@ -448,6 +454,24 @@ class User extends AbstractEntity {
      */
     public function setTitle($title) {
         $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * @return Device
+     */
+    public function getDevice()
+    {
+        return $this->device;
+    }
+
+    /**
+     * @param Device $device
+     * @return $this
+     */
+    public function setDevice($device)
+    {
+        $this->device = $device;
         return $this;
     }
     
