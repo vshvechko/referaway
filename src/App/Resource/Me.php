@@ -54,6 +54,10 @@ class Me extends AbstractResource {
             throw new StatusException('User not found', self::STATUS_NOT_FOUND);
 
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         $action = $data['action'];
 

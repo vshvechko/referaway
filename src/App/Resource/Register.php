@@ -81,6 +81,10 @@ class Register extends AbstractResource {
 
     public function post($id = null) {
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
 

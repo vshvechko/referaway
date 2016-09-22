@@ -14,6 +14,10 @@ class VerifyPhone extends AbstractResource
     {
         try {
             $data = $this->getRequest()->getParsedBody();
+            if (!is_array($data)) {
+                $data = [];
+            }
+
             $this->addValidator('phone', v::phone()->length(null, 32));
             $this->validateArray($data);
             /**

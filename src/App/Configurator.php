@@ -171,6 +171,20 @@ class Configurator
 
     public function initMiddleware(App $app)
     {
+        $app->add(function ($request, $response, $next) {
+            $request->registerMediaTypeParser(
+                "application/json",
+                function ($input) {
+                    $result = json_decode($input, true);
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new StatusException('Wrong body format', 500);
+                    }
+                    return $result;
+                }
+            );
+
+            return $next($request, $response);
+        });
         return $this;
     }
 

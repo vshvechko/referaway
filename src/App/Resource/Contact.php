@@ -81,6 +81,9 @@ class Contact extends AbstractResource
         $user = $this->authenticateUser();
 
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
 
         try {
             $emailValidator = v::email()->length(null, 32);
@@ -148,6 +151,10 @@ class Contact extends AbstractResource
         }
 
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
             $emailValidator = v::email()->length(null, 32);

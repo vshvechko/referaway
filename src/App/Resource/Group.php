@@ -95,6 +95,10 @@ class Group extends AbstractResource {
     public function post($id = null) {
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
             $this->addValidator('name', v::notEmpty()->length(1, 255)->setName('Group Name'));
@@ -134,6 +138,10 @@ class Group extends AbstractResource {
             throw new StatusException('Group not found', self::STATUS_NOT_FOUND);
 
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
             $this->addValidator(self::REQUEST_ACTION, v::notEmpty());

@@ -106,6 +106,10 @@ class Referral extends AbstractResource
     public function post($id = null) {
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
             $addressValidator = v::notEmpty()->length(null, 255);
@@ -184,6 +188,10 @@ class Referral extends AbstractResource
     public function put($id) {
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         /**
          * @var ReferralEntity $entity

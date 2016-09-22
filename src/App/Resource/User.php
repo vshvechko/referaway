@@ -119,6 +119,10 @@ class User extends AbstractResource {
         }
 
         $data = $this->getRequest()->getParsedBody();
+        if (!is_array($data)) {
+            $data = [];
+        }
+
 
         try {
             $this->addValidator('email', v::optional(v::notEmpty()->length(1, 32)->setName('email')));
