@@ -51,7 +51,6 @@ class ReferralDAO extends AbstractDAO
 
     public function updateReferral(Referral $entity, $data, $owner, $target, $customFields = null) {
         $entity->populate($data);
-        $entity->setOwner($owner);
         if (!is_null($target)) {
             $entity->setTarget($target);
         }
@@ -69,6 +68,9 @@ class ReferralDAO extends AbstractDAO
                 $fields[] = $field;
             }
             $entity->setCustomFields($fields);
+        }
+        if (isset($data['revenue'])) {
+            $entity->setRevenue($data['revenue']);
         }
 
         $this->save($entity);

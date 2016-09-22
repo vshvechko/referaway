@@ -24,7 +24,7 @@ class Referral extends AbstractEntity
     const STATUS_COMPLETED = 1;
     const STATUS_FAILED = 2;
 
-    protected $notPopulatedFields = ['owner', 'images', 'customFields', 'created'];
+    protected $notPopulatedFields = ['owner', 'images', 'customFields', 'created', 'revenue'];
 
     /**
      * @var Contact
@@ -58,8 +58,11 @@ class Referral extends AbstractEntity
      * @var int
      */
     protected $status;
-    
-    // TODO
+
+    /**
+     * @Column(type="integer", length=11, nullable=false)
+     * @var int
+     */
     protected $revenue;
 
     /**
@@ -102,6 +105,7 @@ class Referral extends AbstractEntity
         $this->setStatus(self::STATUS_PENDING);
         $this->setIsRead(0);
         $this->setCreated(new \DateTime('now'));
+        $this->setRevenue(0);
     }
 
     public function getCustomFields($type = null) {
@@ -235,7 +239,7 @@ class Referral extends AbstractEntity
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getRevenue()
     {

@@ -5,6 +5,7 @@ namespace App\Resource;
 
 use App\DAO\ContactDAO;
 use App\DAO\ReferralDAO;
+use App\Entity\Contact;
 use App\Entity\ReferralCustomField;
 use App\Entity\ReferralImage;
 use App\Exception\StatusException;
@@ -184,6 +185,9 @@ class Referral extends AbstractResource
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
 
+        /**
+         * @var ReferralEntity $entity
+         */
         $entity = $this->getService()->findById($id);
         if (!$entity) {
             throw new StatusException('Not found', self::STATUS_NOT_FOUND);
@@ -197,7 +201,8 @@ class Referral extends AbstractResource
             $emailValidator = v::email()->length(null, 32);
             $phoneValidator = v::phone()->length(null, 32);
 
-            $this->addValidator('name', v::optional(v::notEmpty()->length(1, 255)->setName('Name')));
+            $this->addValidator('name', v::optional(v::notEmpty()->length(1, 255)->setName('name')));
+            $this->addValidator('revenue', v::optional(v::intVal()->not(v::negative())->max(9999999)->setName('revenue')));
             $this->addValidator(
                 'status',
                 v::optional(v::in([ReferralEntity::STATUS_PENDING, ReferralEntity::STATUS_COMPLETED, ReferralEntity::STATUS_FAILED]))
@@ -220,6 +225,16 @@ class Referral extends AbstractResource
                 if (!$target || $target->getOwner() != $user) {
                     throw new StatusException('Target not found', self::STATUS_NOT_FOUND);
                 }
+            }
+
+            /**
+             * @var Contact|null $target
+             */
+            if (array_key_exists('revenue', $data)
+                && !(!is_null($entity->getTarget()) && $entity->getTarget()->getUser() == $user
+                    || $entity->getType() == ReferralEntity::TYPE_SELF)) {
+                // only target can set revenue
+                unset($data['revenue']);
             }
 
             $customFields = (isset($data[self::REQUEST_CUSTOM_FIELDS]) && is_array($data[self::REQUEST_CUSTOM_FIELDS]))
