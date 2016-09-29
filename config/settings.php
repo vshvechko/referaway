@@ -65,8 +65,18 @@ return [
 
         // sinch application settings
         'sms' => [
-            'appKey' => '2d426bef-5fd2-426e-87cc-feb370846239',
-            'appSecret' => 'NYH50VBdXUiWkLIXoGzY5w=='
+            'appKey' => '<appkey>',
+            'appSecret' => '<appsecret>'
+        ],
+
+        // push notifications settings
+        'pusher' => [
+            'apns' => [
+                'certificate' => __DIR__ . '/apns-certificate.pem'
+            ],
+            'gcm' => [
+                'apiKey' => '<apikey>'
+            ],
         ]
     ],
 ];
