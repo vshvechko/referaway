@@ -8,6 +8,7 @@ use App\DAO\ReferralDAO;
 use App\Entity\Contact;
 use App\Entity\ReferralCustomField;
 use App\Entity\ReferralImage;
+use App\Event\ReferralStatusChangedEvent;
 use App\Exception\StatusException;
 use Interop\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,6 +17,7 @@ use Slim\Http\Response;
 use App\Entity\Referral as ReferralEntity;
 use Respect\Validation\Validator as v;
 use App\Resource\ViewModel\Helper\Referral as ReferralHelper;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Referral extends AbstractResource
 {
@@ -64,7 +66,7 @@ class Referral extends AbstractResource
         $this->contactService = $service;
     }
 
-    public function get($id, $subId = null) {
+    public function get($id = null, $subId = null) {
         $user = $this->authenticateUser();
         
         if ($id) {
@@ -185,7 +187,7 @@ class Referral extends AbstractResource
         }
     }
 
-    public function put($id) {
+    public function put($id, $subId = null) {
         $user = $this->authenticateUser();
         $data = $this->getRequest()->getParsedBody();
         if (!is_array($data)) {
@@ -278,8 +280,15 @@ class Referral extends AbstractResource
                     $this->validateArray($fieldData);
                 }
             }
-
+            $oldStatus = $entity->getStatus();
             $entity = $this->getService()->updateReferral($entity, $data, $user, $target, $customFields);
+            if ($entity->getStatus() != $oldStatus) {
+                /**
+                 * @var EventDispatcher $eventManager
+                 */
+                $eventManager = $this->getServiceLocator()->get('eventManager');
+                $eventManager->dispatch(ReferralStatusChangedEvent::NAME, new ReferralStatusChangedEvent($entity));
+            }
 
             return ['referral' => (new ReferralHelper())->exportArray($entity, $this->getServiceLocator()->get('imageService'))];
         } catch (ValidationException $e) {

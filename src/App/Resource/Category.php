@@ -38,7 +38,7 @@ class Category extends AbstractResource {
         $this->service = $service;
     }
 
-    public function get($id, $subId = null) {
+    public function get($id = null, $subId = null) {
 
         if ($id) {
             $category = $this->getService()->findById($id);

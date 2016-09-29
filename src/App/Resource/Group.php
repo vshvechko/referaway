@@ -63,7 +63,7 @@ class Group extends AbstractResource {
         $this->referralService = new ReferralDAO($this->getEntityManager());
     }
 
-    public function get($id, $subId = null) {
+    public function get($id = null, $subId = null) {
         $user = $this->authenticateUser();
         if ($id === null) {
             $params = $this->getRequest()->getQueryParams();

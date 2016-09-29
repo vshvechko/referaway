@@ -66,53 +66,13 @@ class User extends AbstractResource {
         $this->contactService = $contactService;
     }
 
-
-
-    /**
-     * @param null $id
-     * @return \Slim\Http\Response|void
-     * @throws StatusException
-     */
-    public function _get($id = null) {
-        if ($id === null) {
-            $users = $this->getService()->findAll();
-            /**
-             * @var UserEntity $user
-             */
-            $data = [];
-            foreach ($users as $user) {
-                $data[] = (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
-            }
-
-        } else {
-            $user = $this->getService()->findById($id);
-            if ($user === null) {
-                throw new StatusException('User not found', self::STATUS_NOT_FOUND);
-            }
-            $data = (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
-        }
-
-        return $data;
-    }
-
-    /**
-     * Create user
-     */
-    public function _post() {
-        $obj = $this->getRequest()->getParsedBody();
-
-        try {
-            $user = $this->getService()->createUser($obj);
-            return (new UserHelper())->exportUserArray($user, $this->getServiceLocator()->get('imageService'));
-        } catch (\InvalidArgumentException $e) {
-            throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
-        }
-    }
-
     /**
      * Update user
+     * @param $id
+     * @return array|mixed
+     * @throws StatusException
      */
-    public function put($id) {
+    public function put($id, $subId = null) {
         $user = $this->authenticateUser();
         if ($id != $user->getId()) {
             throw new StatusException('Authentication error', self::STATUS_UNAUTHORIZED);
@@ -173,21 +133,6 @@ class User extends AbstractResource {
         } catch (\InvalidArgumentException $e) {
             throw new StatusException($e->getMessage(), self::STATUS_BAD_REQUEST);
         }
-    }
-
-    /**
-     * @param $id
-     * @return bool|void
-     * @throws StatusException
-     */
-    public function _delete($id) {
-        $status = $this->getService()->deleteUser($id);
-
-        if ($status === false) {
-            throw new StatusException('Not found', self::STATUS_NOT_FOUND);
-        }
-
-        return true;
     }
 
     /**

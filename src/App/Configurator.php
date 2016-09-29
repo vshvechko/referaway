@@ -4,6 +4,10 @@ namespace App;
 
 
 use App\DoctrineExtensions\DBAL\Types\UTCDateTimeType;
+use App\Entity\Device;
+use App\Event\Listener\ReferralListener;
+use App\Event\ReferralStatusChangedEvent;
+use App\Exception\CommonException;
 use App\Exception\StatusException;
 use App\Helper\EncryptionHelper;
 use App\Helper\ResponseDataFormatter;
@@ -25,13 +29,40 @@ use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
 use Slim\Handlers\Strategies\RequestResponseArgs;
 use Slim\Http\Response;
-use App\Resource\AbstractResource as Resource;
+use App\Resource\AbstractResource as RestResource;
+use Sly\NotificationPusher\Adapter\Apns;
+use Sly\NotificationPusher\Adapter\Gcm;
+use Sly\NotificationPusher\PushManager;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Configurator
 {
 
     public function loadDependencyDefaults(ContainerInterface $container)
     {
+        // event manager
+        $container['eventManager'] = function(ContainerInterface $c) {
+            return new EventDispatcher();
+        };
+
+        // notification
+        $container['notificationManager'] = function(ContainerInterface $c) {
+            return new PushManager();
+        };
+        $container['notificationAdapter'] = function(ContainerInterface $c) {
+            $settings = $c->get('settings')['pusher'];
+
+            return function($type) use ($settings) {
+                switch ($type) {
+                    case Device::TYPE_APNS:
+                        return new Apns($settings['apns']);
+                    case Device::TYPE_GCM:
+                        return new Gcm($settings['gcm']);
+                }
+                throw new CommonException('Push Notification Adapter not Supported');
+            };
+        };
+
         // logger
         $container['logger'] = function (ContainerInterface $c) {
             $settings = $c->get('settings')['logger'];
@@ -171,6 +202,7 @@ class Configurator
 
     public function initMiddleware(App $app)
     {
+        $c = $app->getContainer();
         $app->add(function ($request, $response, $next) {
             $request->registerMediaTypeParser(
                 "application/json",
@@ -185,6 +217,19 @@ class Configurator
 
             return $next($request, $response);
         });
+
+        $app->add(function ($request, $response, $next) use ($c) {
+            /**
+             * @var EventDispatcher $eventManager
+             */
+            $eventManager = $c->get('eventManager');
+            $eventManager->addListener(ReferralStatusChangedEvent::NAME, function($event) use ($c) {
+                (new ReferralListener($c))->onStatusChanged($event);
+            });
+
+            return $next($request, $response);
+        });
+
         return $this;
     }
 
@@ -198,7 +243,7 @@ class Configurator
              */
             $formatter = $this->get('dataFormatter');
             try {
-                $resource = Resource::load($resource, $request, $response, $this);
+                $resource = RestResource::load($resource, $request, $response, $this);
 
                 return $response->withJson($formatter->getSuccess($resource->get($id, $subId)));
             } catch (StatusException $e) {
@@ -214,7 +259,7 @@ class Configurator
              */
             $formatter = $this->get('dataFormatter');
             try {
-                $resource = Resource::load($resource, $request, $response, $this);
+                $resource = RestResource::load($resource, $request, $response, $this);
 
                 return $response->withJson($formatter->getSuccess($resource->post($id)));
             } catch (StatusException $e) {
@@ -230,7 +275,7 @@ class Configurator
              */
             $formatter = $this->get('dataFormatter');
             try {
-                $resource = Resource::load($resource, $request, $response, $this);
+                $resource = RestResource::load($resource, $request, $response, $this);
 
                 return $response->withJson($formatter->getSuccess($resource->put($id, $subId)));
             } catch (StatusException $e) {
@@ -246,7 +291,7 @@ class Configurator
              */
             $formatter = $this->get('dataFormatter');
             try {
-                $resource = Resource::load($resource, $request, $response, $this);
+                $resource = RestResource::load($resource, $request, $response, $this);
                 $resource->delete($id, $subId);
                 return $response->withJson($formatter->getSuccess());
             } catch (StatusException $e) {

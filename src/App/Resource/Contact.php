@@ -41,7 +41,7 @@ class Contact extends AbstractResource
         $this->setService(new ContactDAO($this->getEntityManager()));
     }
 
-    public function get($id, $subId = null) {
+    public function get($id = null, $subId = null) {
         $logger = $this->getServiceLocator()->get('logger');
         $logger->debug(__METHOD__);
 
@@ -139,7 +139,7 @@ class Contact extends AbstractResource
         }
     }
 
-    public function put($id) {
+    public function put($id, $subId = null) {
         $logger = $this->getServiceLocator()->get('logger');
         $logger->debug(__METHOD__);
 
