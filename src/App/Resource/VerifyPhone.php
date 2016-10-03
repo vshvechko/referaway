@@ -15,7 +15,7 @@ class VerifyPhone extends AbstractResource
         try {
             $data = $this->getRequest()->getParsedBody();
             if (!is_array($data)) {
-                $data = [];
+                throw new StatusException('Wrong Format', self::STATUS_BAD_REQUEST);
             }
 
             $this->addValidator('phone', v::phone()->length(null, 32));

@@ -25,7 +25,7 @@ class ResetPassword extends AbstractResource
         try {
             $data = $this->getRequest()->getParsedBody();
             if (!is_array($data)) {
-                $data = [];
+                throw new StatusException('Wrong Format', self::STATUS_BAD_REQUEST);
             }
 
             $this->addValidator('email', v::email()->length(null, 32));

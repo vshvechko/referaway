@@ -82,7 +82,7 @@ class Contact extends AbstractResource
 
         $data = $this->getRequest()->getParsedBody();
         if (!is_array($data)) {
-            $data = [];
+            throw new StatusException('Wrong Format', self::STATUS_BAD_REQUEST);
         }
 
         try {
@@ -152,7 +152,7 @@ class Contact extends AbstractResource
 
         $data = $this->getRequest()->getParsedBody();
         if (!is_array($data)) {
-            $data = [];
+            throw new StatusException('Wrong Format', self::STATUS_BAD_REQUEST);
         }
 
 

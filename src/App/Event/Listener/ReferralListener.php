@@ -16,7 +16,8 @@ class ReferralListener extends AbstractListener
         if ($device = $owner->getDevice()) {
             // send push notification
             $pushManager = $this->getContainer()->get('notificationManager');
-            $adapter = ($this->getContainer()->get('notificationAdapter'))($device->getType());
+            $factory = $this->getContainer()->get('notificationAdapter');
+            $adapter = $factory($device->getType());
 
             $devices = new Device($device->getToken());
             $message = [
