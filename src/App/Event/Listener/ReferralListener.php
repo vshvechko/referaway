@@ -27,7 +27,11 @@ class ReferralListener extends AbstractListener
                 'name' => $referral->getName(),
                 'value' => $referral->getStatus()
             ];
-            $message = new Message(json_encode($message));
+            if ($device->getType() == \App\Entity\Device::TYPE_APNS) {
+                $message = new Message('Referral status changed', ['custom' => ['customData' => $message]]);
+            } else {
+                $message = new Message(json_encode($message));
+            }
 
             $push = new Push($adapter, $devices, $message);
             $pushManager->add($push);

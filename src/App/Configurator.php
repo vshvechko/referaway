@@ -47,7 +47,7 @@ class Configurator
 
         // notification
         $container['notificationManager'] = function(ContainerInterface $c) {
-            return new PushManager();
+            return new PushManager(PushManager::ENVIRONMENT_PROD);
         };
         $container['notificationAdapter'] = function(ContainerInterface $c) {
             $settings = $c->get('settings')['pusher'];
