@@ -270,6 +270,10 @@ class Contact extends AbstractEntity
         return $this->getCustomFields(ContactCustomField::TYPE_EMAIL);
     }
 
+    public function getPhoneCustomFields() {
+        return $this->getCustomFields(ContactCustomField::TYPE_PHONE);
+    }
+
     /**
      * @return mixed
      */

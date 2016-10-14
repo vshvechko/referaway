@@ -103,6 +103,9 @@ class Register extends AbstractResource {
             if ($this->getUserService()->isEmailExist($data['email']))
                 throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
 
+            if ($this->getUserService()->isPhoneExist($data['phone']))
+                throw new \InvalidArgumentException('phone "' . $data['phone'] . '" exists already');
+
             /**
              * @var SMSManager $smsService
              */

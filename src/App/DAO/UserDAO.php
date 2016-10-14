@@ -70,6 +70,14 @@ class UserDAO extends AbstractDAO {
         return false;
     }
 
+    public function isPhoneExist($phone, $exceptId = null) {
+        $user = $this->findByPhone($phone);
+        if (!empty($user)) {
+            return $exceptId ? ($user->getId() != $exceptId) : true;
+        }
+        return false;
+    }
+
     /**
      * @param $token
      * @return null|UserEntity
@@ -95,6 +103,15 @@ class UserDAO extends AbstractDAO {
         $qb->select('e')
             ->from($this->getRepositoryName(), 'e')
             ->where($qb->expr()->eq('LOWER(e.email)', ':email'))->setParameter('email', strtolower($email));
+
+        return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
+    }
+
+    public function findByPhone($phone, $hydrate = false, $skipCache = false) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('e')
+            ->from($this->getRepositoryName(), 'e')
+            ->where($qb->expr()->eq('e.phone', ':phone'))->setParameter('phone', $phone);
 
         return $qb->getQuery()->useResultCache(!$skipCache, null)->getOneOrNullResult($hydrate ? Query::HYDRATE_ARRAY : null);
     }

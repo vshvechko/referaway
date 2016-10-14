@@ -92,7 +92,7 @@ class Contact extends AbstractResource
 //            $this->addValidator('email', $emailValidator->setName('email'));
 //            $this->addValidator('phone', $phoneValidator->setName('phone'));
             $this->addValidator('firstName', v::notEmpty()->length(1, 32)->setName('firstName'));
-            $this->addValidator('lastName', v::notEmpty()->length(1, 32)->setName('lastName'));
+            $this->addValidator('lastName', v::optional(v::length(1, 32))->setName('lastName'));
             $this->addValidator('business', v::optional(v::length(null, 32))->setName('business'));
             $this->addValidator(
                 'type',

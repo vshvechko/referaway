@@ -110,8 +110,23 @@ class ContactDAO extends AbstractDAO {
                     break;
                 }
             }
-        } else {
-            $entity->setUser(null);
+        }
+        if (is_null($entity->getUser())) {
+            $phoneFields = $entity->getPhoneCustomFields();
+            if (count($phoneFields)) {
+                $userDAO = new UserDAO($this->getEntityManager());
+
+                /**
+                 * @var ContactCustomField $customField
+                 */
+                foreach ($customFields as $customField) {
+                    $user = $userDAO->findByPhone($customField->getValue());
+                    if ($user) {
+                        $entity->setUser($user);
+                        break;
+                    }
+                }
+            }
         }
 
         $this->save($entity, false);
@@ -160,6 +175,23 @@ class ContactDAO extends AbstractDAO {
         } else {
             $entity->setUser(null);
         }
+        if (is_null($entity->getUser())) {
+            $phoneFields = $entity->getPhoneCustomFields();
+            if (count($phoneFields)) {
+                $userDAO = new UserDAO($this->getEntityManager());
+
+                /**
+                 * @var ContactCustomField $customField
+                 */
+                foreach ($customFields as $customField) {
+                    $user = $userDAO->findByPhone($customField->getValue());
+                    if ($user) {
+                        $entity->setUser($user);
+                        break;
+                    }
+                }
+            }
+        }
 
         $this->save($entity, false);
 
@@ -174,14 +206,22 @@ class ContactDAO extends AbstractDAO {
             ->from($this->getRepositoryName(), 'c')
             ->innerJoin('c.customFields', 'cf')
             ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->eq('cf.type', ':type'),
-                    $qb->expr()->eq('LOWER(cf.value)', ':email'),
-                    $qb->expr()->isNull('c.user')
+                $qb->expr()->orX(
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('cf.type', ':ptype'),
+                        $qb->expr()->eq('LOWER(cf.value)', ':phone')
+                    ),
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('cf.type', ':type'),
+                        $qb->expr()->eq('LOWER(cf.value)', ':email')
+                    )
                 )
             )
+            ->andWhere($qb->expr()->isNull('c.user'))
             ->setParameter('type', ContactCustomField::TYPE_EMAIL)
-            ->setParameter('email', strtolower($user->getEmail()));
+            ->setParameter('ptype', ContactCustomField::TYPE_PHONE)
+            ->setParameter('email', strtolower($user->getEmail()))
+            ->setParameter('phone', $user->getPhone());
 
         $contacts = $qb->getQuery()->useResultCache(!$skipCache, null)->getResult();
         /**

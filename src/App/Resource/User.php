@@ -104,6 +104,10 @@ class User extends AbstractResource {
                 if ($this->getService()->isEmailExist($data['email'], $user->getId()))
                     throw new \InvalidArgumentException('email "' . $data['email'] . '" exists already');
             }
+            if (!empty($data['phone'])) {
+                if ($this->getService()->isPhoneExist($data['phone'], $user->getId()))
+                    throw new \InvalidArgumentException('phone "' . $data['phone'] . '" exists already');
+            }
             if (!empty($data['password'])) {
                 $user->setPassword($this->getServiceLocator()->get('encryptionHelper')->getHash($data['password']));
             }
